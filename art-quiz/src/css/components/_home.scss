@@ -1,0 +1,34 @@
+.home {
+  background-image: url('../assets/img/bg_home_s.jpg');
+  background-position: bottom center;
+  background-repeat: no-repeat;
+
+  main {
+    .game-options {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      text-align: center;
+      position: absolute;
+      bottom: 38px;
+      left: 0;
+      right: 0;
+      gap: 20px;
+
+      &::before {
+        content: '';
+        display: block;
+        width: 166px;
+        height: 62px;
+        margin: 0 auto;
+        background-image: url('../assets/svg/logo.svg');
+        margin-bottom: 12px;
+      }
+
+      a {
+        @extend .button;
+        width: 268px;
+      }
+    }
+  }
+}

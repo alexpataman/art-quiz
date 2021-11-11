@@ -38,18 +38,17 @@ module.exports = {
     port: 4200,
     hot: isDev,
   },
-  //devtool: isDev ? 'source-map' : false,
+  devtool: isDev ? 'source-map' : false,
   plugins: [
     new HTMLWebpackPlugin({
       template: './index.html',
-      alwaysWriteToDisk: true,
       minify: {
         collapseWhitespace: isProd,
       },
     }),
     new CopyWebpackPlugin({
       patterns: [
-        //{ from: path.resolve(__dirname, 'src/data'), to: 'data' },
+        { from: path.resolve(__dirname, 'src/data'), to: 'data' },
         { from: path.resolve(__dirname, 'src/assets'), to: 'assets' },
       ],
     }),
@@ -59,6 +58,10 @@ module.exports = {
   ],
   module: {
     rules: [
+      {
+        test: /\.html$/i,
+        loader: 'html-loader',
+      },
       {
         test: /\.s[ac]ss$/i,
         use: [

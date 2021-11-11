@@ -1,0 +1,23 @@
+// -----------------------------------------------------------------------------
+// This file contains all styles related to the button component.
+// -----------------------------------------------------------------------------
+
+.button {
+  display: inline-block;
+  border: 1px solid #ffffff;
+  box-sizing: border-box;
+  border-radius: 56px;
+  text-align: center;
+  padding: 14px;
+  background: transparent;
+  color: $text-color;
+  font-size: 24px;
+  line-height: 28px;
+}
+
+.button-pink {
+  @extend .button;
+  color: $primary-color;
+  background: $pink-color;
+  border: 0;
+}

@@ -1,3 +1,5 @@
+@import './variables.scss';
+
 @font-face {
   font-family: 'Arial-MT';
   src: url('../assets/fonts/Arial-MT.woff'); /* Путь к файлу со шрифтом */
@@ -7,5 +9,10 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  background: rgb(228, 234, 255);
 }
+
+body {
+  background: $primary-color;
+}
+
+@import 'button';
