@@ -5,4 +5,15 @@
 body > header {
   display: flex;
   justify-content: right;
+
+  .arrow-left {
+    position: absolute;
+    left: 10px;
+    top: 10px;
+    width: 34px;
+    height: 34px;
+    background-image: url('../assets/svg/arrow_left.svg');
+    background-repeat: no-repeat;
+    background-position: center;
+  }
 }

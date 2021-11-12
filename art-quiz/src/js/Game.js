@@ -1,5 +1,5 @@
 import { layout } from '../main';
-import data from '../data/images';
+import DB from '../data/images';
 
 export default class Game {
   QUIZ_TYPES = [
@@ -8,16 +8,23 @@ export default class Game {
   ];
 
   SETTINGS = {
-    questionsPerRound: 10,
+    questionsPerRound: 3,
     numberOfRounds: 6,
+    numberOfAnswerOptions: 4,
     imagePath:
-      'https://raw.githubusercontent.com/alexpataman/image-data/master/img/{{imageID}}.jpg',
+      'https://raw.githubusercontent.com/alexpataman/image-data/master/img/{{imageNum}}.jpg',
   };
 
   constructor() {
     this.prepareGameData();
     this.showHomePage();
-    console.log(this.data);
+    this.variables = {
+      gameType: null,
+      currentRoundId: null,
+      currentQuestionId: null,
+      currentQuestion: null,
+      currentAnswerOptions: null,
+    };
   }
 
   showHomePage() {
@@ -40,18 +47,60 @@ export default class Game {
   }
 
   showRoundSelectorPage() {
-    layout.setPageContent(this.getRoundSelectorContent(), 'round-selector');
+    layout.setPageContent(this.getRoundSelectorPageContent(), 'round-selector');
+    layout.addBackLink(this.showHomePage, this);
   }
 
-  showQuestionPage(roundIndex, questionIndex) {
-    const question =
-      this.data.quizzes[this.gameType].rounds[roundIndex].questions[
-        questionIndex
-      ];
-    layout.setPageContent(this.getQuestionContent(question), 'question');
+  startQuestion(roundIndex, questionIndex = 0) {
+    console.log(roundIndex, questionIndex);
+    this.variables.currentQuestionId = questionIndex;
+    this.variables.currentQuestion = this.getQuestion(
+      roundIndex,
+      questionIndex
+    );
+    this.variables.currentAnswerOptions = this.shuffleOptions(
+      this.variables.currentQuestion.data,
+      this.getWrongOptions()
+    );
+
+    layout.setPageContent(this.getQuestionPageContent(), 'question');
+    layout.addBackLink(this.showRoundSelectorPage, this);
   }
 
-  getRoundSelectorContent() {
+  getQuestion(roundIndex, questionIndex) {
+    return this.data.quizzes[this.variables.gameType].rounds[roundIndex]
+      .questions[questionIndex];
+  }
+
+  shuffleOptions(correctAnswer, wrongOptions) {
+    return wrongOptions
+      .concat(correctAnswer)
+      .sort((a, b) => 0.5 - Math.random());
+  }
+
+  /**
+   *  Getting wrong answer options
+   * - exclude correct answer
+   * - shuffle
+   * - keep unique author names only
+   */
+  getWrongOptions() {
+    return DB.filter(
+      (el) =>
+        JSON.stringify(el) !==
+        JSON.stringify(this.variables.currentQuestion.data)
+    )
+      .sort((a, b) => 0.5 - Math.random())
+      .reduce((acc, item) => {
+        if (!acc.some((el) => item.author === el.author)) {
+          acc.push(item);
+        }
+        return acc;
+      }, [])
+      .slice(0, this.SETTINGS.numberOfAnswerOptions - 1);
+  }
+
+  getRoundSelectorPageContent() {
     let html = document.createElement('section');
     for (let i = 0; i < this.SETTINGS.numberOfRounds; i++) {
       const option = document.createElement('div');
@@ -67,17 +116,149 @@ export default class Game {
     return html;
   }
 
-  getQuestionContent(question) {
-    let html = document.createElement('section');
-    //console.log(question);
-    html.innerHTML = JSON.stringify(question, null, 2);
+  getRoundProgressBarContent() {
+    const html = document.createElement('ul');
+    this.data.quizzes[this.variables.gameType].rounds[
+      this.variables.currentRoundId
+    ].questions.forEach((el) => {
+      const bullet = document.createElement('li');
+      bullet.className =
+        el.status === true ? 'correct' : el.status === false ? 'wrong' : 'new';
+      bullet.textContent = bullet.className;
+      html.append(bullet);
+    });
     return html;
   }
 
-  getRoundImageUrl(roundId) {
+  getQuestionPageContent() {
+    // console.log(
+    //   this.variables.currentQuestion,
+    //   this.variables.currentAnswerOptions
+    // );
+    const html = document.createElement('section');
+
+    switch (this.variables.gameType) {
+      case 'artist':
+        html.append(this.getQuestionArtistPageContent());
+        break;
+      case 'pictures':
+        html.append(this.getQuestionPicturesPageContent());
+        break;
+    }
+
+    html.append(this.getRoundProgressBarContent());
+    return html;
+  }
+
+  getQuestionArtistPageContent() {
+    const html = document.createElement('div');
+    const image = document.createElement('img');
+    const answerOptions = document.createElement('div');
+
+    image.src = this.getQuestionImageUrl(
+      this.variables.currentQuestion.data.imageNum
+    );
+    this.variables.currentAnswerOptions.forEach((option, index) => {
+      const answerOption = document.createElement('button');
+      answerOption.dataset['id'] = index;
+      answerOption.textContent = option.author;
+      answerOption.addEventListener('click', (event) =>
+        this.processAnswer(event)
+      );
+      answerOptions.append(answerOption);
+    });
+    html.append(image);
+    html.append(answerOptions);
+
+    return html;
+  }
+
+  getQuestionPicturesPageContent() {
+    const html = document.createElement('div');
+    const h2 = document.createElement('h2');
+    console.log(this.variables);
+    h2.textContent =
+      'Какую картину нарисовал ' + this.variables.currentQuestion.data.author;
+
+    const answerOptions = document.createElement('div');
+
+    this.variables.currentAnswerOptions.forEach((option, index) => {
+      const answerOption = document.createElement('img');
+      answerOption.dataset['id'] = index;
+      answerOption.src = this.getQuestionImageUrl(option.imageNum);
+      answerOption.addEventListener('click', (event) =>
+        this.processAnswer(event)
+      );
+      answerOptions.append(answerOption);
+    });
+    html.append(h2);
+    html.append(answerOptions);
+
+    return html;
+  }
+
+  processAnswer(event) {
+    const isCorrectAnswer = this.isCorrectAnswer(event);
+    this.setUserAnswer(isCorrectAnswer);
+    if (isCorrectAnswer) {
+      console.log('correct');
+    } else {
+      console.log('wrong');
+    }
+    this.nextQuestion();
+    //console.log(this.variables);
+    //console.log(this.data);
+  }
+
+  nextQuestion() {
+    console.log(this.variables);
+    if (
+      this.variables.currentQuestionId <
+      this.SETTINGS.questionsPerRound - 1
+    ) {
+      this.variables.currentQuestionId++;
+      this.startQuestion(
+        this.variables.currentRoundId,
+        this.variables.currentQuestionId
+      );
+    } else if (
+      this.variables.currentRoundId <
+      this.SETTINGS.numberOfRounds - 1
+    ) {
+      this.variables.currentRoundId++;
+      this.variables.currentQuestionId = 0;
+      this.startQuestion(
+        this.variables.currentRoundId,
+        this.variables.currentQuestionId
+      );
+    } else {
+      this.showHomePage();
+    }
+  }
+
+  setUserAnswer(value) {
+    this.data.quizzes[this.variables.gameType].rounds[
+      this.variables.currentRoundId
+    ].questions[this.variables.currentQuestionId].status = value;
+  }
+
+  isCorrectAnswer(event) {
+    const answerOption =
+      this.variables.currentAnswerOptions[event.currentTarget.dataset['id']];
+    return (
+      JSON.stringify(answerOption) ===
+      JSON.stringify(this.variables.currentQuestion.data)
+    );
+  }
+
+  getQuestionImageUrl(imageNum) {
+    return this.SETTINGS.imagePath.replace('{{imageNum}}', imageNum);
+  }
+
+  getRoundImageUrl(roundID) {
     return this.SETTINGS.imagePath.replace(
-      '{{imageID}}',
-      this.data.quizzes[this.gameType].rounds[roundId].imageID
+      '{{imageNum}}',
+      this.data.quizzes[this.variables.gameType].rounds[roundID].imageNum
     );
   }
 
@@ -99,7 +280,7 @@ export default class Game {
 
   setupQuestions(quizType) {
     if (
-      data.length <=
+      DB.length <=
       this.SETTINGS.numberOfRounds * this.SETTINGS.questionsPerRound
     ) {
       throw new Error(
@@ -107,7 +288,7 @@ export default class Game {
       );
     }
 
-    const questions = [...data]
+    const questions = [...DB]
       .sort((a, b) => 0.5 - Math.random())
       .slice(0, this.SETTINGS.numberOfRounds * this.SETTINGS.questionsPerRound);
 
@@ -115,20 +296,19 @@ export default class Game {
     for (let r = 0; r < this.SETTINGS.numberOfRounds; r++) {
       const roundData = {
         questions: [],
-        imageID: null,
+        imageNum: null,
       };
       for (let q = 0; q < this.SETTINGS.questionsPerRound; q++) {
         roundData.questions.push({
-          correctAnswer: questions[i],
-          userAnswer: null,
-          isCorrectAnswer: false,
+          data: questions[i],
+          status: null,
         });
         i++;
       }
-      roundData.imageID =
+      roundData.imageNum =
         roundData.questions[
           Math.floor(Math.random() * this.SETTINGS.questionsPerRound)
-        ].correctAnswer.imageNum;
+        ].data.imageNum;
       this.data.quizzes[quizType].rounds.push(roundData);
     }
   }
@@ -146,11 +326,12 @@ export default class Game {
   }
 
   startGame(event) {
-    this.gameType = event.target.dataset['id'];
+    this.variables.gameType = event.target.dataset['id'];
     this.showRoundSelectorPage();
   }
 
   startRound(event) {
-    this.showQuestionPage(event.currentTarget.dataset['roundId'], 0);
+    this.variables.currentRoundId = event.currentTarget.dataset['roundId'];
+    this.startQuestion(this.variables.currentRoundId);
   }
 }

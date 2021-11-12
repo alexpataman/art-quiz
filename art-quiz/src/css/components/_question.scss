@@ -1,0 +1,7 @@
+.question {
+  & > main section {
+    img {
+      max-width: 100%;
+    }
+  }
+}
