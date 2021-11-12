@@ -1,15 +1,84 @@
+$border-radius: 25px;
+
 .round-selector {
   & > main section {
     display: flex;
     flex-wrap: wrap;
-    gap: 20px;
+    gap: 15px 10px;
+    justify-content: space-between;
 
     & > div {
-      flex-basis: calc(50% - 20px);
-    }
+      flex-basis: calc(50% - 10px);
 
-    img {
-      max-width: 100%;
+      img {
+        max-width: 100%;
+        border-radius: $border-radius;
+      }
+
+      h3 {
+        margin: 0 0 5px;
+        font-size: 16px;
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .category-image {
+        position: relative;
+        overflow: hidden;
+
+        .hover {
+          position: absolute;
+          background-color: $pink-color-with-opacity;
+          width: 100%;
+          height: 100%;
+          z-index: 1;
+          bottom: -100%;
+          display: flex;
+          flex-direction: column;
+          border-radius: $border-radius;
+          align-items: center;
+          justify-content: space-evenly;
+          transition: all 0.2s;
+
+          a {
+            color: $primary-color;
+            font-size: 18px;
+
+            &.statistics {
+              background: url('../assets/svg/star.svg') 0 -2px no-repeat;
+              padding-left: 30px;
+            }
+
+            &.play-again {
+              background: url('../assets/svg/arrow-cycle.svg') 0 3px no-repeat;
+              padding-left: 30px;
+            }
+          }
+        }
+      }
+
+      &:hover,
+      &.touched {
+        .hover {
+          bottom: 0;
+        }
+      }
+
+      &.neutral {
+        img {
+          filter: grayscale(100%);
+        }
+      }
+      &.success {
+        .score {
+          color: $green-color;
+        }
+      }
+      &.fail {
+        .score {
+          color: $pink-color;
+        }
+      }
     }
   }
 }

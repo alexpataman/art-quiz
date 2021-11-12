@@ -2,6 +2,67 @@
   & > main section {
     img {
       max-width: 100%;
+      border-radius: 25px;
+    }
+
+    .answer-options {
+      margin-top: 10px;
+      display: flex;
+      flex-wrap: wrap;
+      row-gap: 10px;
+      justify-content: space-between;
+
+      & > button {
+        @extend .button;
+        flex-basis: calc(50% - 5px);
+        font-size: 14px;
+        line-height: 16px;
+        min-height: 62px;
+        padding: 14px 5px;
+
+        &.wrong {
+          background-color: $pink-color;
+          color: $primary-color;
+        }
+        &.correct {
+          background-color: $green-color;
+          color: $primary-color;
+        }
+      }
+    }
+
+    ul {
+      display: flex;
+      justify-content: space-evenly;
+      list-style: none;
+      padding: 0;
+      margin-top: 30px;
+
+      li {
+        width: 6px;
+        height: 6px;
+        background: #ccc;
+        border-radius: 50%;
+
+        &.correct {
+          background: $green-color;
+        }
+
+        &.wrong {
+          background: $pink-color;
+        }
+      }
+      & > .new {
+        width: 10px;
+        height: 10px;
+        margin-top: -2px;
+      }
+
+      & > .new ~ .new {
+        width: 6px;
+        height: 6px;
+        margin-top: 0;
+      }
     }
   }
 }

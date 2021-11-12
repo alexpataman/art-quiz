@@ -3,11 +3,15 @@ export default class Test {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
-  async question(quizType) {
+  async quiz(quizType) {
     await this.timeout(10);
     document
       .querySelector(`.game-options a[data-id="${quizType}"]`)
       .dispatchEvent(new Event('click'));
+  }
+
+  async question(quizType) {
+    await this.quiz(quizType);
 
     await this.timeout(10);
     document

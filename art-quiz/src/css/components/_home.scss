@@ -3,6 +3,12 @@
   background-position: bottom center;
   background-repeat: no-repeat;
 
+  & > header {
+    .logo {
+      display: none;
+    }
+  }
+
   main {
     .game-options {
       display: flex;

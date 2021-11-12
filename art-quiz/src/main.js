@@ -10,7 +10,8 @@ const settings = new Settings();
 const game = new Game();
 const test = new Test();
 
-//test.question('artist');
+test.question('artist');
 //test.question('pictures');
+//test.quiz('artist');
 
 export { layout, game, settings };

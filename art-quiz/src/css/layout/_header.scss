@@ -5,6 +5,7 @@
 body > header {
   display: flex;
   justify-content: right;
+  min-height: 60px;
 
   .arrow-left {
     position: absolute;
@@ -15,5 +16,18 @@ body > header {
     background-image: url('../assets/svg/arrow_left.svg');
     background-repeat: no-repeat;
     background-position: center;
+  }
+
+  .logo {
+    width: 108px;
+    height: 42px;
+    margin: 0 auto;
+    background-image: url('../assets/svg/logo2.svg');
+    background-size: 100% auto;
+    background-repeat: no-repeat;
+    margin-bottom: 12px;
+    position: absolute;
+    right: 0;
+    left: 0;
   }
 }
