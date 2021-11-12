@@ -1,4 +1,6 @@
 export default class Layout {
+  TRANSITION_TIMEOUT = 500;
+
   constructor() {
     this.setSelectors();
     this.setHandlers();
@@ -13,8 +15,12 @@ export default class Layout {
   }
 
   setPageContent(content, className = '') {
-    this.main.replaceChildren(content);
-    this.setBodyClassName(className);
+    this.main.style.opacity = 0;
+    setTimeout(() => {
+      this.setBodyClassName(className);
+      this.main.replaceChildren(content);
+      this.main.style.opacity = 1;
+    }, this.TRANSITION_TIMEOUT);
   }
 
   setBodyClassName(className) {
@@ -22,13 +28,15 @@ export default class Layout {
   }
 
   async addBackLink(fn, context) {
-    this.backLink = this.getBackLink();
-    this.backLinkWrapper.replaceChildren(this.backLink);
+    setTimeout(() => {
+      this.backLink = this.getBackLink();
+      this.backLinkWrapper.replaceChildren(this.backLink);
 
-    this.backLink.addEventListener('click', () => {
-      this.backLink.remove();
-      fn.apply(context);
-    });
+      this.backLink.addEventListener('click', () => {
+        this.backLink.remove();
+        fn.apply(context);
+      });
+    }, this.TRANSITION_TIMEOUT);
   }
 
   getBackLink() {

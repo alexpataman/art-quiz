@@ -1,5 +1,20 @@
 .home {
   background-image: url('../assets/img/bg_home_s.jpg');
+
+  // @include breakpoint(medium) {
+  //   background-image: url('../assets/img/bg_home_m.jpg');
+  // }
+
+  @media screen and (min-width: 502px) {
+    background-image: url('../assets/img/bg_home_m.jpg');
+    background-size: cover;
+  }
+
+  @media screen and (min-width: 798px) {
+    background-image: url('../assets/img/bg_home_l.jpg');
+    background-size: cover;
+  }
+
   background-position: bottom center;
   background-repeat: no-repeat;
 

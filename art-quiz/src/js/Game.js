@@ -247,14 +247,16 @@ export default class Game {
     const html = document.createElement('div');
     const h2 = document.createElement('h2');
     console.log(this.variables);
-    h2.textContent =
-      'Какую картину нарисовал ' + this.variables.currentQuestion.data.author;
+    h2.textContent = `Какую картину нарисовал ${this.variables.currentQuestion.data.author}?`;
 
     const answerOptions = document.createElement('div');
+    answerOptions.className = 'answer-options';
 
     this.variables.currentAnswerOptions.forEach((option, index) => {
       const answerOption = document.createElement('img');
       answerOption.dataset['id'] = index;
+      answerOption.alt = option.name;
+      answerOption.title = option.name;
       answerOption.src = this.getQuestionImageUrl(option.imageNum);
       answerOption.addEventListener('click', (event) =>
         this.processAnswer(event)
@@ -285,17 +287,18 @@ export default class Game {
   }
 
   highlightAnswers(userAnswerId) {
-    layout.main
-      .querySelectorAll('.answer-options button')
-      .forEach((el, index) => {
-        if (index === +userAnswerId) {
-          if (el.textContent === this.variables.currentQuestion.data.author) {
-            el.className = 'correct';
-          } else {
-            el.className = 'wrong';
-          }
+    layout.main.querySelectorAll('.answer-options > *').forEach((el, index) => {
+      if (index === +userAnswerId) {
+        if (
+          el.textContent === this.variables.currentQuestion.data.author ||
+          el.title === this.variables.currentQuestion.data.name
+        ) {
+          el.className = 'correct';
+        } else {
+          el.className = 'wrong';
         }
-      });
+      }
+    });
   }
 
   nextQuestion() {

@@ -32,3 +32,25 @@
   }
 }
 
+@mixin breakpoint($breakpoint) {
+  @if map-has-key($breakpoints, $breakpoint) {
+    @media ( min-width: #{ map-get( $breakpoints, $breakpoint ) } ) {
+      @content;
+    }
+  } @else if
+    type_of($breakpoint) ==
+    number and
+    unit($breakpoint) ==
+    px or
+    unit($breakpoint) ==
+    em or
+    unit($breakpoint) ==
+    rem
+  {
+    @media (min-width: $breakpoint) {
+      @content;
+    }
+  } @else {
+    @warn "There is an error with a breakpoint `#{$breakpoint}`.";
+  }
+}
