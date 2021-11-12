@@ -65,6 +65,7 @@ export default class Game {
 
     layout.setPageContent(this.getQuestionPageContent(), 'question');
     layout.addBackLink(this.showRoundSelectorPage, this);
+    this.preloadNextQuestionImages();
   }
 
   getQuestion(roundIndex, questionIndex) {
@@ -211,7 +212,7 @@ export default class Game {
   }
 
   nextQuestion() {
-    console.log(this.variables);
+    //console.log(this.variables);
     if (
       this.variables.currentQuestionId <
       this.SETTINGS.questionsPerRound - 1
@@ -319,6 +320,42 @@ export default class Game {
     } else {
       this.setupGameData();
     }
+    this.preloadNecessaryImages();
+  }
+
+  /**
+   * Preload round images
+   * Preload first question images
+   */
+  preloadNecessaryImages() {
+    this.QUIZ_TYPES.forEach((type) => {
+      this.data.quizzes[type.id].rounds.forEach((el) => {
+        console.log(el);
+        this.preloadImage(this.getQuestionImageUrl(el.imageNum));
+        this.preloadImage(
+          this.getQuestionImageUrl(el.questions[0].data.imageNum)
+        );
+      });
+    });
+  }
+
+  preloadNextQuestionImages() {
+    if (
+      this.variables.currentQuestionId <
+      this.SETTINGS.questionsPerRound - 1
+    ) {
+      const nextQuestion = this.getQuestion(
+        this.variables.currentRoundId,
+        this.variables.currentQuestionId + 1
+      );
+      this.preloadImage(this.getQuestionImageUrl(nextQuestion.data.imageNum));
+    }
+  }
+
+  preloadImage(url, callback) {
+    var img = new Image();
+    img.src = url;
+    img.onload = callback;
   }
 
   saveGameData() {

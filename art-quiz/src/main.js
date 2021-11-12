@@ -11,6 +11,6 @@ const game = new Game();
 const test = new Test();
 
 //test.question('artist');
-test.question('pictures');
+//test.question('pictures');
 
 export { layout, game, settings };
