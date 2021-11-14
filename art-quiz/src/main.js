@@ -16,17 +16,4 @@ const test = new Test();
 //test.quiz('artist');
 //test.modal();
 
-// document.addEventListener('DOMContentLoaded', function () {
-//   let elems = document.querySelectorAll('.modal');
-//   let options = { endingTop: '50%' };
-//   let instances = M.Modal.init(elems, options);
-// });
-
-// window.addEventListener('DOMContentLoaded', () => {
-//   let modal = document.getElementById('modal');
-//   let instance = M.Modal.getInstance(modal);
-//   instance.open();
-//   console.log('1');
-// });
-
 export { layout, game, settings };

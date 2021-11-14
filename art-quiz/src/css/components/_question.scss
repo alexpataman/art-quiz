@@ -93,6 +93,8 @@
           height: 60px;
           left: 20px;
           bottom: 20px;
+          background-repeat: no-repeat;
+          background-size: 60px;
         }
 
         &.wrong::before {
@@ -113,6 +115,51 @@
       .button {
         display: block;
         width: 100%;
+      }
+
+      .results {
+        img {
+          max-width: 100%;
+        }
+        .great {
+          h3 {
+            font-family: 'GilroyBold';
+            font-size: 55px;
+            letter-spacing: 2px;
+            line-height: 54px;
+          }
+        }
+
+        .fail {
+          h3 {
+            font-size: 30px;
+            margin-top: 20px;
+          }
+        }
+
+        .normal {
+          h3 {
+            font-size: 30px;
+            margin-top: 20px;
+          }
+        }
+
+        .score {
+          font-family: 'GilroyBold';
+          font-size: 40px;
+          line-height: 54px;
+          margin: 30px 0;
+        }
+
+        .nav {
+          display: flex;
+          justify-content: space-between;
+          gap: 20px;
+
+          button {
+            font-size: 22px;
+          }
+        }
       }
     }
   }

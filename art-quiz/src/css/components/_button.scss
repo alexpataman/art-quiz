@@ -15,6 +15,13 @@
   line-height: 28px;
 }
 
+.button-white {
+  @extend .button;
+  border-color: $primary-color;
+  color: $primary-color;
+  background: #ffffff;
+}
+
 .button-pink {
   @extend .button;
   color: $primary-color;

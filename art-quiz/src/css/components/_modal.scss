@@ -2,9 +2,10 @@
   transform: translateY(-50%) !important;
   border-radius: $primary-border-radius;
   max-height: 95%;
+  width: 90%;
   display: block;
   opacity: 0;
-  top: 0;
+  top: -100vh;
   transition: top 0.5s;
 
   &.open {

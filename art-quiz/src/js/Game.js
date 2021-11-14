@@ -9,7 +9,7 @@ export default class Game {
   ];
 
   SETTINGS = {
-    questionsPerRound: config.debug ? 3 : 10,
+    questionsPerRound: config.debug ? 2 : 10,
     numberOfRounds: config.debug ? 6 : 12,
     numberOfAnswerOptions: 4,
     delayAfterAnswer: 500,
@@ -46,6 +46,14 @@ export default class Game {
     });
 
     layout.setPageContent(html, 'home');
+  }
+
+  showRoundStatisticsPage(roundId) {
+    layout.setPageContent(
+      this.getRoundStatisticsPageContent(roundId),
+      'round-statistics'
+    );
+    layout.addBackLink(this.showRoundSelectorPage, this);
   }
 
   showRoundSelectorPage() {
@@ -104,36 +112,129 @@ export default class Game {
       .slice(0, this.SETTINGS.numberOfAnswerOptions - 1);
   }
 
-  getQuestionAnswerModalContent(isCorrectAnswer) {
+  getQuestionFinalModalContent() {
+    const roundStatistics = this.getRoundStatistics(
+      this.variables.currentRoundId
+    );
     const html = document.createElement('div');
-    html.innerHTML = `
-      <figure class="${isCorrectAnswer ? 'correct' : 'wrong'}">
-        <img 
-        src="${this.getQuestionImageUrl(
-          this.variables.currentQuestion.data.imageNum
-        )}" 
-        title="${this.variables.currentQuestion.data.name}" 
-        alt="${this.variables.currentQuestion.data.name}">
-      </figure>
-      <div class="details">
-        <h3>${this.variables.currentQuestion.data.name}</h3>
-        <i>
-          ${this.variables.currentQuestion.data.author}, 
-          ${this.variables.currentQuestion.data.year}
-        </i> 
-      </div>     
-      <button class="button-pink next-question">Next</button>      
+    html.className = 'results';
+
+    if (roundStatistics.correct === roundStatistics.total) {
+      html.innerHTML = `      
+      <div class="great">
+        <img src="../assets/svg/round_stars.svg">
+        <h3>Grand result</h3>        
+      </div>`;
+    } else if (roundStatistics.correct > 0) {
+      html.innerHTML = `      
+      <div class="normal">
+        <img src="../assets/svg/round_cup.svg">
+        <h3>Congratulations!</h3>        
+      </div>`;
+    } else {
+      html.innerHTML = `      
+      <div class="fail">
+        <img src="../assets/svg/round_broken_cup.svg">
+        <h3>Good luck next time!</h3>        
+      </div>`;
+    }
+
+    html.innerHTML += `
+      <div class="score">
+        ${roundStatistics.correct}/${roundStatistics.total}
+      </div>
+      <div class="nav">
+        <button class="button-white home-page">Home</button>      
+        <button class="button-pink next-quiz">Next Quiz</button>      
+      </div>
     `;
 
-    html
-      .querySelector('.next-question')
-      .addEventListener('click', () => this.nextQuestion());
+    html.querySelector('.home-page').addEventListener('click', () => {
+      layout.modal.close();
+      this.showHomePage();
+    });
+
+    html.querySelector('.next-quiz').addEventListener('click', () => {
+      layout.modal.close();
+      this.showRoundSelectorPage();
+    });
 
     return html;
   }
 
+  getQuestionAnswerModalContent(
+    question,
+    isCorrectAnswer,
+    showNextButton = false
+  ) {
+    const html = document.createElement('div');
+    html.innerHTML = `
+      <figure class="${isCorrectAnswer ? 'correct' : 'wrong'}">
+        <img 
+        src="${this.getQuestionImageUrl(question.data.imageNum)}" 
+        title="${question.data.name}" 
+        alt="${question.data.name}">
+      </figure>
+      <div class="details">
+        <h3>${question.data.name}</h3>
+        <i>
+          ${question.data.author}, 
+          ${question.data.year}
+        </i> 
+      </div>            
+    `;
+
+    const button = document.createElement('button');
+    if (showNextButton) {
+      button.className = 'button-pink next-question';
+      button.textContent = 'Next';
+      button.addEventListener('click', () => {
+        layout.modal.close();
+        this.nextQuestion();
+      });
+    } else {
+      button.className = 'button-pink';
+      button.textContent = 'Close';
+      button.addEventListener('click', () => {
+        layout.modal.close();
+      });
+    }
+
+    html.append(button);
+
+    return html;
+  }
+
+  getRoundStatisticsPageContent(roundId) {
+    const html = document.createElement('section');
+    html.innerHTML = `<h1>Category #${roundId + 1} / Score</h1>`;
+    const items = document.createElement('div');
+    items.className = 'items';
+    const roundStatistics = this.getRoundStatistics(roundId);
+    this.data.quizzes[this.variables.gameType].rounds[
+      roundId
+    ].questions.forEach((question, index) => {
+      let item = document.createElement('div');
+      item.className = question.status ? 'correct' : 'wrong';
+      item.dataset['id'] = index;
+      item.innerHTML = `
+        <img src="${this.getQuestionImageUrl(
+          question.data.imageNum
+        )}" alr="">        
+      `;
+      item.addEventListener('click', () => {
+        layout.modal.open(
+          this.getQuestionAnswerModalContent(question, question.status)
+        );
+      });
+      items.append(item);
+    });
+    html.append(items);
+    return html;
+  }
+
   getRoundSelectorPageContent() {
-    let html = document.createElement('section');
+    const html = document.createElement('section');
     for (let i = 0; i < this.SETTINGS.numberOfRounds; i++) {
       const roundStatistics = this.getRoundStatistics(i);
       const option = document.createElement('div');
@@ -146,7 +247,9 @@ export default class Game {
           event.currentTarget.classList.add('touched');
         });
       } else {
-        option.addEventListener('click', (event) => this.startRound(event));
+        option.addEventListener('click', (event) =>
+          this.startRound(event.currentTarget.dataset['roundId'])
+        );
       }
 
       option.className =
@@ -172,12 +275,14 @@ export default class Game {
       `;
 
       option.querySelector('.statistics').addEventListener('click', (event) => {
-        console.log('statistics for', event.currentTarget.dataset['id']);
+        this.showRoundStatisticsPage(event.currentTarget.dataset['roundId']);
       });
 
       option
         .querySelector('.play-again')
-        .addEventListener('click', (event) => this.startRound(event));
+        .addEventListener('click', (event) =>
+          this.startRound(event.currentTarget.dataset['roundId'])
+        );
 
       html.append(option);
     }
@@ -304,7 +409,13 @@ export default class Game {
     this.highlightAnswers(userAnswerId);
     this.setUserAnswer(isCorrectAnswer);
     setTimeout(() => {
-      layout.openModal(this.getQuestionAnswerModalContent(isCorrectAnswer));
+      layout.modal.open(
+        this.getQuestionAnswerModalContent(
+          this.variables.currentQuestion,
+          isCorrectAnswer,
+          true
+        )
+      );
     }, this.SETTINGS.delayAfterAnswer);
   }
 
@@ -324,10 +435,6 @@ export default class Game {
   }
 
   nextQuestion() {
-    if (layout.modalInstance.isOpen) {
-      layout.modalInstance.close();
-    }
-
     if (
       this.variables.currentQuestionId <
       this.SETTINGS.questionsPerRound - 1
@@ -337,20 +444,22 @@ export default class Game {
         this.variables.currentRoundId,
         this.variables.currentQuestionId
       );
-    } else if (
-      this.variables.currentRoundId <
-      this.SETTINGS.numberOfRounds - 1
-    ) {
-      this.saveGameData();
-      this.variables.currentRoundId++;
-      this.variables.currentQuestionId = 0;
-      this.startQuestion(
-        this.variables.currentRoundId,
-        this.variables.currentQuestionId
-      );
     } else {
-      this.showHomePage();
+      this.saveGameData();
+      setTimeout(
+        () => layout.modal.open(this.getQuestionFinalModalContent()),
+        this.SETTINGS.delayAfterAnswer
+      );
     }
+  }
+
+  nextRound() {
+    this.variables.currentRoundId++;
+    this.variables.currentQuestionId = 0;
+    this.startQuestion(
+      this.variables.currentRoundId,
+      this.variables.currentQuestionId
+    );
   }
 
   setUserAnswer(value) {
@@ -371,10 +480,10 @@ export default class Game {
     return this.SETTINGS.imagePath.replace('{{imageNum}}', imageNum);
   }
 
-  getRoundImageUrl(roundID) {
+  getRoundImageUrl(roundId) {
     return this.SETTINGS.imagePath.replace(
       '{{imageNum}}',
-      this.data.quizzes[this.variables.gameType].rounds[roundID].imageNum
+      this.data.quizzes[this.variables.gameType].rounds[roundId].imageNum
     );
   }
 
@@ -486,8 +595,8 @@ export default class Game {
     this.showRoundSelectorPage();
   }
 
-  startRound(event) {
-    this.variables.currentRoundId = event.currentTarget.dataset['roundId'];
+  startRound(roundId) {
+    this.variables.currentRoundId = roundId;
     this.resetRoundProgress(this.variables.currentRoundId);
     this.startQuestion(this.variables.currentRoundId);
   }

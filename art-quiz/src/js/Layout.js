@@ -1,4 +1,5 @@
 import Modal from './Modal';
+import { game } from '../main';
 export default class Layout {
   TRANSITION_TIMEOUT = 500;
 
@@ -9,23 +10,7 @@ export default class Layout {
   }
 
   initModal() {
-    let options = { endingTop: '50%', dismissible: false };
-    this.modalInstance = new Modal(this.modal);
-  }
-
-  openModal(content, showFooter = false) {
-    this.modalContent.replaceChildren(content);
-    this.modalInstance.open();
-
-    if (showFooter) {
-      this.modal.insertAdjacentHTML(
-        'beforeend',
-        `<div class="modal-footer">
-            <a href="#!" class="modal-close waves-effect waves-green btn-flat">Agree</a>
-        </div>
-    `
-      );
-    }
+    this.modal = new Modal(document.getElementById('modal'));
   }
 
   setSelectors() {
@@ -34,8 +19,6 @@ export default class Layout {
     this.main = document.querySelector('body > main');
     this.footer = document.querySelector('body > footer');
     this.backLinkWrapper = this.header.querySelector('.back-link-wrapper');
-    this.modal = document.getElementById('modal');
-    this.modalContent = this.modal.querySelector('.modal-content');
   }
 
   setPageContent(content, className = '') {
@@ -55,7 +38,6 @@ export default class Layout {
     setTimeout(() => {
       this.backLink = this.getBackLink();
       this.backLinkWrapper.replaceChildren(this.backLink);
-
       this.backLink.addEventListener('click', () => {
         this.backLink.remove();
         fn.apply(context);
@@ -69,5 +51,9 @@ export default class Layout {
     return el;
   }
 
-  setHandlers() {}
+  setHandlers() {
+    this.header
+      .querySelector('.logo')
+      .addEventListener('click', () => game.showHomePage());
+  }
 }
