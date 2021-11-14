@@ -4,7 +4,7 @@ export default class Test {
   }
 
   async quiz(quizType) {
-    await this.timeout(10);
+    await this.timeout(510);
     document
       .querySelector(`.game-options a[data-id="${quizType}"]`)
       .dispatchEvent(new Event('click'));
@@ -13,7 +13,7 @@ export default class Test {
   async question(quizType) {
     await this.quiz(quizType);
 
-    await this.timeout(10);
+    await this.timeout(510);
     document
       .querySelector('.round-selector div[data-round-id="0"]')
       .dispatchEvent(new Event('click'));

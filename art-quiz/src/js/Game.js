@@ -12,6 +12,7 @@ export default class Game {
     questionsPerRound: config.debug ? 3 : 10,
     numberOfRounds: config.debug ? 6 : 12,
     numberOfAnswerOptions: 4,
+    delayAfterAnswer: 500,
     imagePath:
       'https://raw.githubusercontent.com/alexpataman/image-data/master/img/{{imageNum}}.jpg',
   };
@@ -101,6 +102,34 @@ export default class Game {
         return acc;
       }, [])
       .slice(0, this.SETTINGS.numberOfAnswerOptions - 1);
+  }
+
+  getQuestionAnswerModalContent(isCorrectAnswer) {
+    const html = document.createElement('div');
+    html.innerHTML = `
+      <figure class="${isCorrectAnswer ? 'correct' : 'wrong'}">
+        <img 
+        src="${this.getQuestionImageUrl(
+          this.variables.currentQuestion.data.imageNum
+        )}" 
+        title="${this.variables.currentQuestion.data.name}" 
+        alt="${this.variables.currentQuestion.data.name}">
+      </figure>
+      <div class="details">
+        <h3>${this.variables.currentQuestion.data.name}</h3>
+        <i>
+          ${this.variables.currentQuestion.data.author}, 
+          ${this.variables.currentQuestion.data.year}
+        </i> 
+      </div>     
+      <button class="button-pink next-question">Next</button>      
+    `;
+
+    html
+      .querySelector('.next-question')
+      .addEventListener('click', () => this.nextQuestion());
+
+    return html;
   }
 
   getRoundSelectorPageContent() {
@@ -274,16 +303,9 @@ export default class Game {
     const isCorrectAnswer = this.isCorrectAnswer(userAnswerId);
     this.highlightAnswers(userAnswerId);
     this.setUserAnswer(isCorrectAnswer);
-    if (isCorrectAnswer) {
-      console.log('correct');
-    } else {
-      console.log('wrong');
-    }
     setTimeout(() => {
-      this.nextQuestion();
-    }, 1000);
-    //console.log(this.variables);
-    //console.log(this.data);
+      layout.openModal(this.getQuestionAnswerModalContent(isCorrectAnswer));
+    }, this.SETTINGS.delayAfterAnswer);
   }
 
   highlightAnswers(userAnswerId) {
@@ -302,7 +324,10 @@ export default class Game {
   }
 
   nextQuestion() {
-    //console.log(this.variables);
+    if (layout.modalInstance.isOpen) {
+      layout.modalInstance.close();
+    }
+
     if (
       this.variables.currentQuestionId <
       this.SETTINGS.questionsPerRound - 1

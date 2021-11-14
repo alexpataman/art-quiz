@@ -1,0 +1,16 @@
+#modal {
+  transform: translateY(-50%) !important;
+  border-radius: $primary-border-radius;
+  max-height: 95%;
+  .modal-content {
+    color: $primary-color;
+    figure {
+      padding: 0;
+      margin: 0;
+      img {
+        max-width: 100%;
+        border-radius: $primary-border-radius;
+      }
+    }
+  }
+}

@@ -5,6 +5,7 @@
 
 // 2. Vendors
 @import 'vendors/normalize';
+@import 'vendors/materialize';
 
 // 3. Base stuff
 @import 'base/base', 'base/fonts', 'base/typography', 'base/helpers';
@@ -18,6 +19,7 @@
 @import 'components/home';
 @import 'components/round_selector';
 @import 'components/question';
+@import 'components/modal';
 
 // 6. Page-specific styles
 @import 'pages/home';

@@ -4,6 +4,27 @@ export default class Layout {
   constructor() {
     this.setSelectors();
     this.setHandlers();
+    this.initModal();
+  }
+
+  initModal() {
+    let options = { endingTop: '50%', dismissible: false };
+    this.modalInstance = M.Modal.init(this.modal, options);
+  }
+
+  openModal(content, showFooter = false) {
+    this.modalContent.replaceChildren(content);
+    this.modalInstance.open();
+
+    if (showFooter) {
+      this.modal.insertAdjacentHTML(
+        'beforeend',
+        `<div class="modal-footer">
+            <a href="#!" class="modal-close waves-effect waves-green btn-flat">Agree</a>
+        </div>
+    `
+      );
+    }
   }
 
   setSelectors() {
@@ -12,6 +33,8 @@ export default class Layout {
     this.main = document.querySelector('body > main');
     this.footer = document.querySelector('body > footer');
     this.backLinkWrapper = this.header.querySelector('.back-link-wrapper');
+    this.modal = document.getElementById('modal');
+    this.modalContent = this.modal.querySelector('.modal-content');
   }
 
   setPageContent(content, className = '') {

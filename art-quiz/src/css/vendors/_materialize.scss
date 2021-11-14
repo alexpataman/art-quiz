@@ -1,0 +1,10 @@
+$radio-fill-color: $pink-color;
+@import 'materialize-css/sass/materialize';
+
+input[type='range'] + .thumb {
+  &.active {
+    .value {
+      color: $primary-color;
+    }
+  }
+}
