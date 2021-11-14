@@ -2,8 +2,12 @@
 // This file contains all styles related to the main section of the site/application.
 // -----------------------------------------------------------------------------
 
+body > header > *,
+body > main {
+  transition: all 0.5s ease-in-out;
+}
+
 body > main {
   flex-grow: 1;
   margin-bottom: 50px;
-  transition: all 0.5s ease-in-out;
 }
