@@ -32,6 +32,9 @@ export default class Home {
 
   resetSettings() {
     console.log('reset settings');
+    delete localStorage._gameData;
+    alert('Done. The page will be reloaded');
+    window.location.reload();
   }
 
   setHandlers() {
