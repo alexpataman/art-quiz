@@ -122,19 +122,19 @@ export default class Game {
     if (roundStatistics.correct === roundStatistics.total) {
       html.innerHTML = `      
       <div class="great">
-        <img src="../assets/svg/round_stars.svg">
+        <img src="./assets/svg/round_stars.svg">
         <h3>Grand result</h3>        
       </div>`;
     } else if (roundStatistics.correct > 0) {
       html.innerHTML = `      
       <div class="normal">
-        <img src="../assets/svg/round_cup.svg">
+        <img src="./assets/svg/round_cup.svg">
         <h3>Congratulations!</h3>        
       </div>`;
     } else {
       html.innerHTML = `      
       <div class="fail">
-        <img src="../assets/svg/round_broken_cup.svg">
+        <img src="./assets/svg/round_broken_cup.svg">
         <h3>Good luck next time!</h3>        
       </div>`;
     }
@@ -268,7 +268,7 @@ export default class Game {
         <div class="category-image">
           <img src="${this.getRoundImageUrl(i)}" alr="">        
           <div class="hover">
-            <a href="#" class="statistics" data-round-id="${i}">Statistics</a>
+            <a href="#" class="statistics" data-round-id="${i}">Score</a>
             <a href="#" class="play-again" data-round-id="${i}">Play Again</a>
           </div>
         </div>        
