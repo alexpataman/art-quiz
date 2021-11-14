@@ -1,3 +1,4 @@
+import Modal from './Modal';
 export default class Layout {
   TRANSITION_TIMEOUT = 500;
 
@@ -9,7 +10,7 @@ export default class Layout {
 
   initModal() {
     let options = { endingTop: '50%', dismissible: false };
-    this.modalInstance = M.Modal.init(this.modal, options);
+    this.modalInstance = new Modal(this.modal);
   }
 
   openModal(content, showFooter = false) {

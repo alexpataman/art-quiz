@@ -2,6 +2,17 @@
   transform: translateY(-50%) !important;
   border-radius: $primary-border-radius;
   max-height: 95%;
+  display: block;
+  opacity: 0;
+  top: 0;
+  transition: top 0.5s;
+
+  &.open {
+    z-index: 1003;
+    opacity: 1;
+    top: 50%;
+  }
+
   .modal-content {
     color: $primary-color;
     figure {

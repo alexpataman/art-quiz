@@ -1,6 +1,12 @@
+import { layout } from '../main';
+
 export default class Test {
   timeout(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  modal() {
+    layout.openModal('test');
   }
 
   async quiz(quizType) {
