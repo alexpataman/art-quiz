@@ -13,6 +13,7 @@ export default class Game {
     numberOfRounds: config.debug ? 6 : 12,
     numberOfAnswerOptions: 4,
     delayAfterAnswer: 500,
+    initRandomSort: false,
     imagePath:
       'https://raw.githubusercontent.com/alexpataman/image-data/master/img/{{imageNum}}.jpg',
   };
@@ -63,7 +64,6 @@ export default class Game {
   }
 
   startQuestion(roundIndex, questionIndex = 0) {
-    console.log(roundIndex, questionIndex);
     this.variables.currentQuestionId = questionIndex;
     this.variables.currentQuestion = this.getQuestion(
       roundIndex,
@@ -104,7 +104,15 @@ export default class Game {
     )
       .sort((a, b) => 0.5 - Math.random())
       .reduce((acc, item) => {
-        if (!acc.some((el) => item.author === el.author)) {
+        if (
+          acc.every(
+            (el) =>
+              item.author.toLocaleLowerCase() !==
+                el.author.toLocaleLowerCase() &&
+              this.variables.currentQuestion.data.author.toLocaleLowerCase() !==
+                item.author.toLocaleLowerCase()
+          )
+        ) {
           acc.push(item);
         }
         return acc;
@@ -334,10 +342,6 @@ export default class Game {
   }
 
   getQuestionPageContent() {
-    // console.log(
-    //   this.variables.currentQuestion,
-    //   this.variables.currentAnswerOptions
-    // );
     const html = document.createElement('section');
 
     switch (this.variables.gameType) {
@@ -380,7 +384,6 @@ export default class Game {
   getQuestionPicturesPageContent() {
     const html = document.createElement('div');
     const h2 = document.createElement('h2');
-    console.log(this.variables);
     h2.textContent = `Какую картину нарисовал ${this.variables.currentQuestion.data.author}?`;
 
     const answerOptions = document.createElement('div');
@@ -513,9 +516,14 @@ export default class Game {
       );
     }
 
-    const questions = [...DB]
-      .sort((a, b) => 0.5 - Math.random())
-      .slice(0, this.SETTINGS.numberOfRounds * this.SETTINGS.questionsPerRound);
+    let questions = [...DB];
+    if (this.SETTINGS.initRandomSort) {
+      questions = questions.sort((a, b) => 0.5 - Math.random());
+    }
+    questions = questions.slice(
+      0,
+      this.SETTINGS.numberOfRounds * this.SETTINGS.questionsPerRound
+    );
 
     let i = 0;
     for (let r = 0; r < this.SETTINGS.numberOfRounds; r++) {
