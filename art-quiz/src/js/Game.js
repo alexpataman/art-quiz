@@ -1,26 +1,9 @@
-import { layout } from '../main';
+import layout from './Layout';
 import DB from '../data/images';
 import config from './config';
 
-export default class Game {
-  QUIZ_TYPES = [
-    { id: 'artist', title: 'Artist Quiz' },
-    { id: 'pictures', title: 'Pictures Quiz' },
-  ];
-
-  SETTINGS = {
-    questionsPerRound: config.debug ? 2 : 10,
-    numberOfRounds: config.debug ? 6 : 12,
-    numberOfAnswerOptions: 4,
-    delayAfterAnswer: 500,
-    initRandomSort: false,
-    imagePath:
-      'https://raw.githubusercontent.com/alexpataman/image-data/master/img/{{imageNum}}.jpg',
-  };
-
+class Game {
   constructor() {
-    this.prepareGameData();
-    this.showHomePage();
     this.variables = {
       gameType: null,
       currentRoundId: null,
@@ -28,17 +11,38 @@ export default class Game {
       currentQuestion: null,
       currentAnswerOptions: null,
     };
+
+    this.QUIZ_TYPES = [
+      { id: 'artist', title: 'Artist Quiz' },
+      { id: 'pictures', title: 'Pictures Quiz' },
+    ];
+
+    this.SETTINGS = {
+      questionsPerRound: config.debug ? 2 : 10,
+      numberOfRounds: config.debug ? 6 : 12,
+      numberOfAnswerOptions: 4,
+      delayAfterAnswer: 500,
+      initRandomSort: false,
+      imagePath:
+        'https://raw.githubusercontent.com/alexpataman/image-data/master/img/{{imageNum}}.jpg',
+    };
+  }
+
+  init() {
+    this.prepareGameData();
+    this.showHomePage();
+    this.setHandlers();
   }
 
   showHomePage() {
-    let html = document.createElement('section');
+    const html = document.createElement('section');
     html.className = 'game-options';
 
     this.QUIZ_TYPES.forEach((el) => {
       const optionWrapper = document.createElement('div');
       const option = document.createElement('a');
       option.href = '#';
-      option.dataset['id'] = el.id;
+      option.dataset.id = el.id;
       option.className = el.id;
       option.textContent = el.title;
       option.addEventListener('click', (event) => this.startGame(event));
@@ -50,10 +54,7 @@ export default class Game {
   }
 
   showRoundStatisticsPage(roundId) {
-    layout.setPageContent(
-      this.getRoundStatisticsPageContent(roundId),
-      'round-statistics'
-    );
+    layout.setPageContent(this.getRoundStatisticsPageContent(roundId), 'round-statistics');
     layout.addBackLink(this.showRoundSelectorPage, this);
   }
 
@@ -65,13 +66,10 @@ export default class Game {
 
   startQuestion(roundIndex, questionIndex = 0) {
     this.variables.currentQuestionId = questionIndex;
-    this.variables.currentQuestion = this.getQuestion(
-      roundIndex,
-      questionIndex
-    );
-    this.variables.currentAnswerOptions = this.shuffleOptions(
+    this.variables.currentQuestion = this.getQuestion(roundIndex, questionIndex);
+    this.variables.currentAnswerOptions = Game.shuffleOptions(
       this.variables.currentQuestion.data,
-      this.getWrongOptions()
+      this.getWrongOptions(),
     );
 
     layout.setPageContent(this.getQuestionPageContent(), 'question');
@@ -80,14 +78,11 @@ export default class Game {
   }
 
   getQuestion(roundIndex, questionIndex) {
-    return this.data.quizzes[this.variables.gameType].rounds[roundIndex]
-      .questions[questionIndex];
+    return this.data.quizzes[this.variables.gameType].rounds[roundIndex].questions[questionIndex];
   }
 
-  shuffleOptions(correctAnswer, wrongOptions) {
-    return wrongOptions
-      .concat(correctAnswer)
-      .sort((a, b) => 0.5 - Math.random());
+  static shuffleOptions(correctAnswer, wrongOptions) {
+    return wrongOptions.concat(correctAnswer).sort(() => 0.5 - Math.random());
   }
 
   /**
@@ -98,19 +93,17 @@ export default class Game {
    */
   getWrongOptions() {
     return DB.filter(
-      (el) =>
-        JSON.stringify(el) !==
-        JSON.stringify(this.variables.currentQuestion.data)
+      (el) => JSON.stringify(el) !== JSON.stringify(this.variables.currentQuestion.data),
     )
-      .sort((a, b) => 0.5 - Math.random())
+      .sort(() => 0.5 - Math.random())
       .reduce((acc, item) => {
         if (
           acc.every(
             (el) =>
-              item.author.toLocaleLowerCase() !==
-                el.author.toLocaleLowerCase() &&
+              // eslint-disable-next-line implicit-arrow-linebreak
+              item.author.toLocaleLowerCase() !== el.author.toLocaleLowerCase() &&
               this.variables.currentQuestion.data.author.toLocaleLowerCase() !==
-                item.author.toLocaleLowerCase()
+                item.author.toLocaleLowerCase(),
           )
         ) {
           acc.push(item);
@@ -121,9 +114,7 @@ export default class Game {
   }
 
   getQuestionFinalModalContent() {
-    const roundStatistics = this.getRoundStatistics(
-      this.variables.currentRoundId
-    );
+    const roundStatistics = this.getRoundStatistics(this.variables.currentRoundId);
     const html = document.createElement('div');
     html.className = 'results';
 
@@ -170,11 +161,7 @@ export default class Game {
     return html;
   }
 
-  getQuestionAnswerModalContent(
-    question,
-    isCorrectAnswer,
-    showNextButton = false
-  ) {
+  getQuestionAnswerModalContent(question, isCorrectAnswer, showNextButton = false) {
     const html = document.createElement('div');
     html.innerHTML = `
       <figure class="${isCorrectAnswer ? 'correct' : 'wrong'}">
@@ -218,35 +205,30 @@ export default class Game {
     html.innerHTML = `<h1>Category #${roundId + 1} / Score</h1>`;
     const items = document.createElement('div');
     items.className = 'items';
-    const roundStatistics = this.getRoundStatistics(roundId);
-    this.data.quizzes[this.variables.gameType].rounds[
-      roundId
-    ].questions.forEach((question, index) => {
-      let item = document.createElement('div');
-      item.className = question.status ? 'correct' : 'wrong';
-      item.dataset['id'] = index;
-      item.innerHTML = `
-        <img src="${this.getQuestionImageUrl(
-          question.data.imageNum
-        )}" alr="">        
+    this.data.quizzes[this.variables.gameType].rounds[roundId].questions.forEach(
+      (question, index) => {
+        const item = document.createElement('div');
+        item.className = question.status ? 'correct' : 'wrong';
+        item.dataset.id = index;
+        item.innerHTML = `
+        <img src="${this.getQuestionImageUrl(question.data.imageNum)}" alr="">        
       `;
-      item.addEventListener('click', () => {
-        layout.modal.open(
-          this.getQuestionAnswerModalContent(question, question.status)
-        );
-      });
-      items.append(item);
-    });
+        item.addEventListener('click', () => {
+          layout.modal.open(this.getQuestionAnswerModalContent(question, question.status));
+        });
+        items.append(item);
+      },
+    );
     html.append(items);
     return html;
   }
 
   getRoundSelectorPageContent() {
     const html = document.createElement('section');
-    for (let i = 0; i < this.SETTINGS.numberOfRounds; i++) {
+    for (let i = 0; i < this.SETTINGS.numberOfRounds; i += 1) {
       const roundStatistics = this.getRoundStatistics(i);
       const option = document.createElement('div');
-      option.dataset['roundId'] = i;
+      option.dataset.roundId = i;
       if (roundStatistics.correct + roundStatistics.wrong) {
         option.addEventListener('click', (event) => {
           layout.main.querySelectorAll('.touched').forEach((el) => {
@@ -255,17 +237,19 @@ export default class Game {
           event.currentTarget.classList.add('touched');
         });
       } else {
-        option.addEventListener('click', (event) =>
-          this.startRound(event.currentTarget.dataset['roundId'])
-        );
+        option.addEventListener('click', (event) => {
+          this.startRound(event.currentTarget.dataset.roundId);
+        });
       }
 
-      option.className =
-        roundStatistics.correct === roundStatistics.total
-          ? 'success'
-          : roundStatistics.correct + roundStatistics.wrong > 0
-          ? 'fail'
-          : 'neutral';
+      if (roundStatistics.correct === roundStatistics.total) {
+        option.className = 'success';
+      } else if (roundStatistics.correct + roundStatistics.wrong > 0) {
+        option.className = 'fail';
+      } else {
+        option.className = 'neutral';
+      }
+
       option.innerHTML = `
         <h3>
           <span>Category #${i + 1}</span>
@@ -283,14 +267,12 @@ export default class Game {
       `;
 
       option.querySelector('.statistics').addEventListener('click', (event) => {
-        this.showRoundStatisticsPage(event.currentTarget.dataset['roundId']);
+        this.showRoundStatisticsPage(event.currentTarget.dataset.roundId);
       });
 
       option
         .querySelector('.play-again')
-        .addEventListener('click', (event) =>
-          this.startRound(event.currentTarget.dataset['roundId'])
-        );
+        .addEventListener('click', (event) => this.startRound(event.currentTarget.dataset.roundId));
 
       html.append(option);
     }
@@ -299,24 +281,19 @@ export default class Game {
   }
 
   resetRoundProgress(roundId) {
-    for (let i = 0; i < this.SETTINGS.questionsPerRound; i++) {
-      this.data.quizzes[this.variables.gameType].rounds[roundId].questions[
-        i
-      ].status = null;
+    for (let i = 0; i < this.SETTINGS.questionsPerRound; i += 1) {
+      this.data.quizzes[this.variables.gameType].rounds[roundId].questions[i].status = null;
     }
-    //this.saveGameData();
   }
 
   getRoundStatistics(roundId) {
-    return this.data.quizzes[this.variables.gameType].rounds[
-      roundId
-    ].questions.reduce(
+    return this.data.quizzes[this.variables.gameType].rounds[roundId].questions.reduce(
       (acc, el) => {
-        acc.total++;
+        acc.total += 1;
         if (el.status === true) {
-          acc.correct++;
+          acc.correct += 1;
         } else if (el.status === false) {
-          acc.wrong++;
+          acc.wrong += 1;
         }
         return acc;
       },
@@ -324,7 +301,7 @@ export default class Game {
         correct: 0,
         wrong: 0,
         total: 0,
-      }
+      },
     );
   }
 
@@ -334,8 +311,13 @@ export default class Game {
       this.variables.currentRoundId
     ].questions.forEach((el) => {
       const bullet = document.createElement('li');
-      bullet.className =
-        el.status === true ? 'correct' : el.status === false ? 'wrong' : 'new';
+      if (el.status === true) {
+        bullet.className = 'correct';
+      } else if (el.status === false) {
+        bullet.className = 'wrong';
+      } else {
+        bullet.className = 'new';
+      }
       html.append(bullet);
     });
     return html;
@@ -349,6 +331,7 @@ export default class Game {
         html.append(this.getQuestionArtistPageContent());
         break;
       case 'pictures':
+      default:
         html.append(this.getQuestionPicturesPageContent());
         break;
     }
@@ -363,16 +346,12 @@ export default class Game {
     const answerOptions = document.createElement('div');
     answerOptions.className = 'answer-options';
 
-    image.src = this.getQuestionImageUrl(
-      this.variables.currentQuestion.data.imageNum
-    );
+    image.src = this.getQuestionImageUrl(this.variables.currentQuestion.data.imageNum);
     this.variables.currentAnswerOptions.forEach((option, index) => {
       const answerOption = document.createElement('button');
-      answerOption.dataset['id'] = index;
+      answerOption.dataset.id = index;
       answerOption.textContent = option.author;
-      answerOption.addEventListener('click', (event) =>
-        this.processAnswer(event)
-      );
+      answerOption.addEventListener('click', (event) => this.processAnswer(event));
       answerOptions.append(answerOption);
     });
     html.append(image);
@@ -391,13 +370,11 @@ export default class Game {
 
     this.variables.currentAnswerOptions.forEach((option, index) => {
       const answerOption = document.createElement('img');
-      answerOption.dataset['id'] = index;
+      answerOption.dataset.id = index;
       answerOption.alt = option.name;
       answerOption.title = option.name;
       answerOption.src = this.getQuestionImageUrl(option.imageNum);
-      answerOption.addEventListener('click', (event) =>
-        this.processAnswer(event)
-      );
+      answerOption.addEventListener('click', (event) => this.processAnswer(event));
       answerOptions.append(answerOption);
     });
     html.append(h2);
@@ -407,17 +384,13 @@ export default class Game {
   }
 
   processAnswer(event) {
-    const userAnswerId = event.currentTarget.dataset['id'];
+    const userAnswerId = event.currentTarget.dataset.id;
     const isCorrectAnswer = this.isCorrectAnswer(userAnswerId);
     this.highlightAnswers(userAnswerId);
     this.setUserAnswer(isCorrectAnswer);
     setTimeout(() => {
       layout.modal.open(
-        this.getQuestionAnswerModalContent(
-          this.variables.currentQuestion,
-          isCorrectAnswer,
-          true
-        )
+        this.getQuestionAnswerModalContent(this.variables.currentQuestion, isCorrectAnswer, true),
       );
     }, this.SETTINGS.delayAfterAnswer);
   }
@@ -429,54 +402,42 @@ export default class Game {
           el.textContent === this.variables.currentQuestion.data.author ||
           el.title === this.variables.currentQuestion.data.name
         ) {
-          el.className = 'correct';
+          el.classList.add('correct');
         } else {
-          el.className = 'wrong';
+          el.classList.add('wrong');
         }
       }
     });
   }
 
   nextQuestion() {
-    if (
-      this.variables.currentQuestionId <
-      this.SETTINGS.questionsPerRound - 1
-    ) {
-      this.variables.currentQuestionId++;
-      this.startQuestion(
-        this.variables.currentRoundId,
-        this.variables.currentQuestionId
-      );
+    if (this.variables.currentQuestionId < this.SETTINGS.questionsPerRound - 1) {
+      this.variables.currentQuestionId += 1;
+      this.startQuestion(this.variables.currentRoundId, this.variables.currentQuestionId);
     } else {
       this.saveGameData();
       setTimeout(
         () => layout.modal.open(this.getQuestionFinalModalContent()),
-        this.SETTINGS.delayAfterAnswer
+        this.SETTINGS.delayAfterAnswer,
       );
     }
   }
 
   nextRound() {
-    this.variables.currentRoundId++;
+    this.variables.currentRoundId += 1;
     this.variables.currentQuestionId = 0;
-    this.startQuestion(
-      this.variables.currentRoundId,
-      this.variables.currentQuestionId
-    );
+    this.startQuestion(this.variables.currentRoundId, this.variables.currentQuestionId);
   }
 
   setUserAnswer(value) {
-    this.data.quizzes[this.variables.gameType].rounds[
-      this.variables.currentRoundId
-    ].questions[this.variables.currentQuestionId].status = value;
+    this.data.quizzes[this.variables.gameType].rounds[this.variables.currentRoundId].questions[
+      this.variables.currentQuestionId
+    ].status = value;
   }
 
   isCorrectAnswer(id) {
     const answerOption = this.variables.currentAnswerOptions[id];
-    return (
-      JSON.stringify(answerOption) ===
-      JSON.stringify(this.variables.currentQuestion.data)
-    );
+    return JSON.stringify(answerOption) === JSON.stringify(this.variables.currentQuestion.data);
   }
 
   getQuestionImageUrl(imageNum) {
@@ -486,7 +447,7 @@ export default class Game {
   getRoundImageUrl(roundId) {
     return this.SETTINGS.imagePath.replace(
       '{{imageNum}}',
-      this.data.quizzes[this.variables.gameType].rounds[roundId].imageNum
+      this.data.quizzes[this.variables.gameType].rounds[roundId].imageNum,
     );
   }
 
@@ -507,36 +468,28 @@ export default class Game {
   }
 
   setupQuestions(quizType) {
-    if (
-      DB.length <=
-      this.SETTINGS.numberOfRounds * this.SETTINGS.questionsPerRound
-    ) {
-      throw new Error(
-        'Wrong game settings. Number of questions in the database is too low.'
-      );
+    if (DB.length <= this.SETTINGS.numberOfRounds * this.SETTINGS.questionsPerRound) {
+      throw new Error('Wrong game settings. Number of questions in the database is too low.');
     }
 
     let questions = [...DB];
     if (this.SETTINGS.initRandomSort) {
-      questions = questions.sort((a, b) => 0.5 - Math.random());
+      questions = questions.sort(() => 0.5 - Math.random());
     }
-    questions = questions.slice(
-      0,
-      this.SETTINGS.numberOfRounds * this.SETTINGS.questionsPerRound
-    );
+    questions = questions.slice(0, this.SETTINGS.numberOfRounds * this.SETTINGS.questionsPerRound);
 
     let i = 0;
-    for (let r = 0; r < this.SETTINGS.numberOfRounds; r++) {
+    for (let r = 0; r < this.SETTINGS.numberOfRounds; r += 1) {
       const roundData = {
         questions: [],
         imageNum: null,
       };
-      for (let q = 0; q < this.SETTINGS.questionsPerRound; q++) {
+      for (let q = 0; q < this.SETTINGS.questionsPerRound; q += 1) {
         roundData.questions.push({
           data: questions[i],
           status: null,
         });
-        i++;
+        i += 1;
       }
       roundData.imageNum =
         roundData.questions[
@@ -553,29 +506,24 @@ export default class Game {
   preloadNecessaryImages() {
     this.QUIZ_TYPES.forEach((type) => {
       this.data.quizzes[type.id].rounds.forEach((el) => {
-        this.preloadImage(this.getQuestionImageUrl(el.imageNum));
-        this.preloadImage(
-          this.getQuestionImageUrl(el.questions[0].data.imageNum)
-        );
+        Game.preloadImage(this.getQuestionImageUrl(el.imageNum));
+        Game.preloadImage(this.getQuestionImageUrl(el.questions[0].data.imageNum));
       });
     });
   }
 
   preloadNextQuestionImages() {
-    if (
-      this.variables.currentQuestionId <
-      this.SETTINGS.questionsPerRound - 1
-    ) {
+    if (this.variables.currentQuestionId < this.SETTINGS.questionsPerRound - 1) {
       const nextQuestion = this.getQuestion(
         this.variables.currentRoundId,
-        this.variables.currentQuestionId + 1
+        this.variables.currentQuestionId + 1,
       );
-      this.preloadImage(this.getQuestionImageUrl(nextQuestion.data.imageNum));
+      Game.preloadImage(this.getQuestionImageUrl(nextQuestion.data.imageNum));
     }
   }
 
-  preloadImage(url, callback) {
-    var img = new Image();
+  static preloadImage(url, callback) {
+    const img = new Image();
     img.src = url;
     img.onload = callback;
   }
@@ -589,17 +537,15 @@ export default class Game {
   }
 
   loadGameData() {
-    this.data = localStorage._gameData
-      ? JSON.parse(localStorage._gameData)
-      : null;
+    this.data = localStorage.gameData ? JSON.parse(localStorage.gameData) : null;
   }
 
   saveGameData() {
-    localStorage._gameData = JSON.stringify(this.data);
+    localStorage.gameData = JSON.stringify(this.data);
   }
 
   startGame(event) {
-    this.variables.gameType = event.target.dataset['id'];
+    this.variables.gameType = event.target.dataset.id;
     this.showRoundSelectorPage();
   }
 
@@ -608,4 +554,10 @@ export default class Game {
     this.resetRoundProgress(this.variables.currentRoundId);
     this.startQuestion(this.variables.currentRoundId);
   }
+
+  setHandlers() {
+    layout.header.querySelector('.logo').addEventListener('click', () => this.showHomePage());
+  }
 }
+
+export default new Game();

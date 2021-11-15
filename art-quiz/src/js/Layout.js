@@ -1,11 +1,9 @@
 import Modal from './Modal';
-import { game } from '../main';
-export default class Layout {
-  TRANSITION_TIMEOUT = 500;
 
+class Layout {
   constructor() {
+    this.TRANSITION_TIMEOUT = 500;
     this.setSelectors();
-    this.setHandlers();
     this.initModal();
   }
 
@@ -36,7 +34,7 @@ export default class Layout {
 
   async addBackLink(fn, context) {
     setTimeout(() => {
-      this.backLink = this.getBackLink();
+      this.backLink = Layout.getBackLink();
       this.backLinkWrapper.replaceChildren(this.backLink);
       this.backLink.addEventListener('click', () => {
         this.backLink.remove();
@@ -45,15 +43,11 @@ export default class Layout {
     }, this.TRANSITION_TIMEOUT);
   }
 
-  getBackLink() {
+  static getBackLink() {
     const el = document.createElement('a');
     el.className = 'arrow-left back';
     return el;
   }
-
-  setHandlers() {
-    this.header
-      .querySelector('.logo')
-      .addEventListener('click', () => game.showHomePage());
-  }
 }
+
+export default new Layout();

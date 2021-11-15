@@ -1,12 +1,12 @@
-import { layout } from '../main';
+import layout from './Layout';
 import { timeout } from './utils';
 
 export default class Test {
-  modal() {
+  static modal() {
     layout.openModal('test');
   }
 
-  async quiz(quizType) {
+  static async quiz(quizType) {
     await timeout(510);
     document
       .querySelector(`.game-options a[data-id="${quizType}"]`)

@@ -1,19 +1,13 @@
-//import 'materialize-css/dist/js/materialize';
-import './css/main';
+import './css/main.scss';
+import settings from './js/Settings';
+import game from './js/Game';
 
-import Layout from './js/Layout';
-import Game from './js/Game';
-import Settings from './js/Settings';
-import Test from './js/Test';
+settings.init();
+game.init();
 
-const layout = new Layout();
-const settings = new Settings();
-const game = new Game();
-const test = new Test();
-
-//test.question('artist');
-//test.question('pictures');
-//test.quiz('artist');
-//test.modal();
-
-export { layout, game, settings };
+// import Test from './js/Test';
+// const test = new Test();
+// test.question('artist');
+// test.question('pictures');
+// test.quiz('artist');
+// test.modal();

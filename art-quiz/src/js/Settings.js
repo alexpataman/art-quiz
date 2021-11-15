@@ -1,46 +1,41 @@
-import { layout } from '../main';
-//import _settingsHtml from '../views/_settings.html';
-
-export default class Home {
-  constructor() {
-    this.init();
-    //this.toggleSettings();
-  }
-
+class Settings {
   init() {
     this.setSelectors();
     this.setHandlers();
   }
 
   setSelectors() {
-    this._htmlContainer = document.querySelector('.settings');
-    this._htmlContent = this._htmlContainer.querySelector('.content');
-    this._htmlToggleLink = this._htmlContainer.querySelector('.icon');
-    this._htmlCloseLink = this._htmlContainer.querySelector('.close');
-    this._htmlButtonSave = this._htmlContainer.querySelector('.save');
-    this._htmlButtonReset = this._htmlContainer.querySelector('.reset');
+    this.htmlContainer = document.querySelector('.settings');
+    this.htmlContent = this.htmlContainer.querySelector('.content');
+    this.htmlToggleLink = this.htmlContainer.querySelector('.icon');
+    this.htmlCloseLink = this.htmlContainer.querySelector('.close');
+    this.htmlButtonSave = this.htmlContainer.querySelector('.save');
+    this.htmlButtonReset = this.htmlContainer.querySelector('.reset');
   }
 
   toggleSettings() {
-    this._htmlContent.classList.toggle('active');
+    this.htmlContent.classList.toggle('active');
   }
 
   saveSettings() {
-    console.log('save settings');
+    // console.log('save settings');
     this.toggleSettings();
   }
 
-  resetSettings() {
-    console.log('reset settings');
-    delete localStorage._gameData;
-    alert('Done. The page will be reloaded');
+  static resetSettings() {
+    delete localStorage.gameData;
+    // alert('Done. The page will be reloaded');
     window.location.reload();
   }
 
   setHandlers() {
-    this._htmlToggleLink.addEventListener('click', () => this.toggleSettings());
-    this._htmlCloseLink.addEventListener('click', () => this.toggleSettings());
-    this._htmlButtonSave.addEventListener('click', () => this.saveSettings());
-    this._htmlButtonReset.addEventListener('click', () => this.resetSettings());
+    this.htmlToggleLink.addEventListener('click', () => this.toggleSettings());
+    this.htmlCloseLink.addEventListener('click', () => this.toggleSettings());
+    this.htmlButtonSave.addEventListener('click', () => this.saveSettings());
+    this.htmlButtonReset.addEventListener('click', () => {
+      Settings.resetSettings();
+    });
   }
 }
+
+export default new Settings();
