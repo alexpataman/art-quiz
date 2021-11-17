@@ -8,7 +8,7 @@
   box-sizing: border-box;
   border-radius: 56px;
   text-align: center;
-  padding: 14px;
+  padding: 14px 30px;
   background: transparent;
   color: $text-color;
   font-size: 24px;
@@ -26,5 +26,11 @@
   @extend .button;
   color: $primary-color;
   background: $pink-color;
+  border: 0;
+}
+
+.button-red {
+  @extend .button;
+  background: $red-color;
   border: 0;
 }

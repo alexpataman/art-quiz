@@ -5,7 +5,13 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="assets/favicon.ico" rel="shortcut icon" />
+    <link rel="apple-touch-icon" sizes="180x180" href="./assets/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="./assets/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="./assets/favicon/favicon-16x16.png">
+    <!-- <link rel="manifest" href="./assets/favicon/site.webmanifest"> -->
+    <link rel="mask-icon" href="./assets/favicon/safari-pinned-tab.svg" color="#5bbad5">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="theme-color" content="#ffffff">
     <title>Art Quiz</title>
 </head>
 
@@ -21,32 +27,98 @@
                     <span>Settings</span>
                 </header>
                 <main>
-                    <div>
-                        <label>Volume</label>
-                        <form action="#">
-                            <p class="range-field">
-                                <input type="range" id="test5" min="0" max="100" />
-                            </p>
-                        </form>
-                    </div>
-                    <div>
-                        <label>Time Game</label>
-                        <div class="switch">
-                            <label>
-                                Off
-                                <input type="checkbox">
-                                <span class="lever"></span>
-                                On
-                            </label>
-                        </div>
-                    </div>
-                    <div>
-                        <label>Time to answer</label>
-                    </div>
+                    <form action="#">
+                        <fieldset class="language">
+                            <label for="language">Language</label>
+                            <div class="row">
+                                <div class="col">
+                                    <label>
+                                        <input name="language" id="language" type="radio" value="en" checked />
+                                        <span>English</span>
+                                    </label>
+                                </div>
+                                <div class="col">
+                                    <label>
+                                        <input name="language" type="radio" value="ru" />
+                                        <span>Russian</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </fieldset>
+                        <fieldset>
+                            <label for="enableSoundEffects">Sound Effects</label>
+                            <div class="switch">
+                                <label>
+                                    Off
+                                    <input type="checkbox" name="enableSoundEffects" id="enableSoundEffects"
+                                        value="true">
+                                    <span class="lever"></span>
+                                    On
+                                </label>
+                            </div>
+                            <div class="dependent" data-dependent-on="enableSoundEffects">
+                                <label for="effectsVolumeLevel">Volume of sound effects</label>
+                                <div class="range-field">
+                                    <input type="range" id="effectsVolumeLevel" min="0" max="100"
+                                        name="effectsVolumeLevel" />
+                                </div>
+                            </div>
+                        </fieldset>
+                        <fieldset>
+                            <label for="enableMusic">Music</label>
+                            <div class="switch">
+                                <label>
+                                    Off
+                                    <input type="checkbox" name="enableMusic" id="enableMusic" value="true">
+                                    <span class="lever"></span>
+                                    On
+                                </label>
+                            </div>
+                            <div class="dependent" data-dependent-on="enableMusic">
+                                <label for="musicVolumeLevel">Volume of music</label>
+                                <div class="range-field">
+                                    <input type="range" id="musicVolumeLevel" min="0" max="100"
+                                        name="musicVolumeLevel" />
+                                </div>
+                            </div>
+
+                        </fieldset>
+                        <fieldset>
+                            <label for="timeLimitedGame">Time Game</label>
+                            <div class="switch">
+                                <label>
+                                    Off
+                                    <input type="checkbox" name="timeLimitedGame" id="timeLimitedGame" value="true">
+                                    <span class="lever"></span>
+                                    On
+                                </label>
+                            </div>
+                        </fieldset>
+                        <fieldset>
+                            <label for="timeLimit">Time to answer</label>
+                            <div class="input-spinner">
+                                <button type="button" class="spinner-step" data-action="stepDown"
+                                    onclick="this.nextElementSibling.stepDown(); this.closest('form').dispatchEvent(new Event('change'))">&ndash;</button>
+                                <input name="timeLimit" id="timeLimit" type="number" min="0" max="20" value="10"
+                                    readonly class="number">
+                                <button type="button" class="spinner-step" data-action="stepUp"
+                                    onclick="this.previousElementSibling.stepUp(); this.closest('form').dispatchEvent(new Event('change'))">+</button>
+                            </div>
+                        </fieldset>
+                        <fieldset>
+                            <details>
+                                <summary>Danger Zone</summary>
+                                <div>
+                                    <small>All data and game progress will be reset</small>
+                                    <button class="button-red clear-storage">Clear All Data</button>
+                                </div>
+                            </details>
+                        </fieldset>
+                    </form>
                 </main>
                 <footer>
                     <button class="button reset">Default</button>
-                    <button class="button-pink save">Save</button>
+                    <button class="button-pink save">Close</button>
                 </footer>
             </section>
         </div>

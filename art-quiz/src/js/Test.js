@@ -2,6 +2,11 @@ import layout from './Layout';
 import { timeout } from './utils';
 
 export default class Test {
+  static async settings() {
+    await timeout(510);
+    document.querySelector(`.settings .icon`).dispatchEvent(new Event('click'));
+  }
+
   static modal() {
     layout.openModal('test');
   }

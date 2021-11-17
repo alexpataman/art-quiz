@@ -4,13 +4,12 @@
 
 /// Regular font family
 /// @type List
-$text-font-stack: 'Gilroy', 'Open Sans', 'Helvetica Neue Light',
-  'Helvetica Neue', 'Helvetica', 'Arial', sans-serif !default;
+$text-font-stack: 'Gilroy', 'Open Sans', 'Helvetica Neue Light', 'Helvetica Neue', 'Helvetica',
+  'Arial', sans-serif !default;
 
 /// Code (monospace) font family
 /// @type List
-$code-font-stack: 'Courier New', 'DejaVu Sans Mono', 'Bitstream Vera Sans Mono',
-  'Monaco', monospace !default;
+$code-font-stack: 'Courier New', 'DejaVu Sans Mono', 'Bitstream Vera Sans Mono', 'Monaco', monospace !default;
 
 /// Copy text color
 /// @type Color
@@ -56,5 +55,7 @@ $primary-color: #010101;
 $pink-color: #ffbca2;
 $pink-color-with-opacity: hsl(17, 100%, 82%, 90%);
 $green-color: #3dda69;
+$white-color: #ffffff;
+$red-color: #ee5757;
 
 $primary-border-radius: 20px;
