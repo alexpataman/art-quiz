@@ -1,6 +1,6 @@
 import './css/main.scss';
 import settings from './js/settings';
-import game from './js/Game';
+import game from './js/game';
 // import Test from './js/Test';
 
 settings.init();

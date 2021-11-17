@@ -1,14 +1,50 @@
-import layout from './Layout';
+// import t from "./translate";
+import i18next from 'i18next';
+import storage from './storage';
+import layout from './layout';
 import DB from '../data/images';
 import config from './config';
 import settings from './settings';
 import sounds from './sounds';
+import Timer from './Timer';
+// import * as utils from './utils';
 
 class Game {
   static QUIZ_TYPES = [
     { id: 'artist', title: 'Artist Quiz' },
     { id: 'pictures', title: 'Pictures Quiz' },
   ];
+
+  static QUIZ_CATEGORIES = {
+    en: [
+      'Portrait',
+      'Landscape',
+      'Still Life',
+      'Pop-Art',
+      'Сubism',
+      'Avant-garde',
+      'Realism',
+      'Interior',
+      'Kitsch',
+      'Minimalism',
+      'Surrealism',
+      'Renaissance',
+    ],
+    ru: [
+      'Портрет',
+      'Пейзаж',
+      'Натюрморт',
+      'Поп-арт',
+      'Кубизм',
+      'Авангард',
+      'Реализм',
+      'Интерьер',
+      'Китч',
+      'Минимализм',
+      'Сюрреализм',
+      'Ренессанс',
+    ],
+  };
 
   static SETTINGS = {
     questionsPerRound: config.debug ? 2 : 10,
@@ -27,6 +63,7 @@ class Game {
       currentQuestionId: null,
       currentQuestion: null,
       currentAnswerOptions: null,
+      timer: new Timer(),
     };
   }
 
@@ -47,7 +84,7 @@ class Game {
       option.href = '#';
       option.dataset.id = el.id;
       option.className = el.id;
-      option.textContent = el.title;
+      option.textContent = i18next.t(el.title);
       option.addEventListener('click', (event) => this.startGame(event));
       optionWrapper.append(option);
       html.append(optionWrapper);
@@ -67,7 +104,8 @@ class Game {
     layout.addBackLink(this.showHomePage, this);
   }
 
-  startQuestion(roundIndex, questionIndex = 0) {
+  async startQuestion(roundIndex, questionIndex = 0) {
+    // this.variables.timer = new Timer(this);
     this.variables.currentQuestionId = questionIndex;
     this.variables.currentQuestion = this.getQuestion(roundIndex, questionIndex);
     this.variables.currentAnswerOptions = Game.shuffleOptions(
@@ -75,9 +113,10 @@ class Game {
       this.getWrongOptions(),
     );
 
-    layout.setPageContent(this.getQuestionPageContent(), 'question');
+    await layout.setPageContent(this.getQuestionPageContent(), 'question');
     layout.addBackLink(this.showRoundSelectorPage, this);
     this.preloadNextQuestionImages();
+    this.variables.timer.init(this);
   }
 
   getQuestion(roundIndex, questionIndex) {
@@ -204,7 +243,7 @@ class Game {
 
   getRoundStatisticsPageContent(roundId) {
     const html = document.createElement('section');
-    html.innerHTML = `<h1>Category #${roundId + 1} / Score</h1>`;
+    html.innerHTML = `<h1>${Game.QUIZ_CATEGORIES[settings.data.language][roundId]} / Score</h1>`;
     const items = document.createElement('div');
     items.className = 'items';
     this.data.quizzes[this.variables.gameType].rounds[roundId].questions.forEach(
@@ -254,7 +293,7 @@ class Game {
 
       option.innerHTML = `
         <h3>
-          <span>Category #${i + 1}</span>
+          <span>${Game.QUIZ_CATEGORIES[settings.data.language][i]}</span>
           <span class="score">
           ${roundStatistics.correct}/${roundStatistics.total}
           </span>
@@ -328,6 +367,8 @@ class Game {
   getQuestionPageContent() {
     const html = document.createElement('section');
 
+    html.append(this.getRoundProgressBarContent());
+
     switch (this.variables.gameType) {
       case 'artist':
         html.append(this.getQuestionArtistPageContent());
@@ -338,7 +379,6 @@ class Game {
         break;
     }
 
-    html.append(this.getRoundProgressBarContent());
     return html;
   }
 
@@ -386,8 +426,16 @@ class Game {
   }
 
   processAnswer(event) {
-    const userAnswerId = event.currentTarget.dataset.id;
-    const isCorrectAnswer = this.isCorrectAnswer(userAnswerId);
+    let isCorrectAnswer;
+    let userAnswerId;
+    this.variables.timer.stop();
+    if (event) {
+      userAnswerId = event.currentTarget.dataset.id;
+      isCorrectAnswer = this.isCorrectAnswer(userAnswerId);
+    } else {
+      isCorrectAnswer = false;
+    }
+
     if (isCorrectAnswer) {
       Game.playEffect('answerCorrect');
     } else {
@@ -418,6 +466,7 @@ class Game {
   }
 
   nextQuestion() {
+    this.variables.timer.destroy();
     if (this.variables.currentQuestionId < Game.SETTINGS.questionsPerRound - 1) {
       this.variables.currentQuestionId += 1;
       this.startQuestion(this.variables.currentRoundId, this.variables.currentQuestionId);
@@ -544,11 +593,11 @@ class Game {
   }
 
   loadGameData() {
-    this.data = localStorage.gameData ? JSON.parse(localStorage.gameData) : null;
+    this.data = storage.exists('gameData') ? storage.get('gameData') : null;
   }
 
   saveGameData() {
-    localStorage.gameData = JSON.stringify(this.data);
+    storage.set('gameData', this.data);
   }
 
   startGame(event) {
@@ -582,6 +631,7 @@ class Game {
 
   setHandlers() {
     layout.header.querySelector('.logo').addEventListener('click', () => this.showHomePage());
+    document.addEventListener('changeLanguage', () => this.showHomePage());
   }
 }
 

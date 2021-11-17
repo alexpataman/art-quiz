@@ -26,3 +26,12 @@
     }
   }
 }
+
+.modal-overlay {
+  z-index: 1002;
+  display: none;
+  opacity: 0.5;
+  &.visible {
+    display: block;
+  }
+}

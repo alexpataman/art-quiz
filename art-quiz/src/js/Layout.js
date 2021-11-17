@@ -5,6 +5,14 @@ class Layout {
     this.TRANSITION_TIMEOUT = 500;
     this.setSelectors();
     this.initModal();
+    this.customEvents = {};
+  }
+
+  getCustomEvent(eventName) {
+    if (!this.customEvents[eventName]) {
+      this.customEvents[eventName] = new Event(eventName);
+    }
+    return this.customEvents[eventName];
   }
 
   initModal() {
@@ -19,13 +27,17 @@ class Layout {
     this.backLinkWrapper = this.header.querySelector('.back-link-wrapper');
   }
 
-  setPageContent(content, className = '') {
-    this.main.style.opacity = 0;
-    setTimeout(() => {
-      this.setBodyClassName(className);
-      this.main.replaceChildren(content);
-      this.main.style.opacity = 1;
-    }, this.TRANSITION_TIMEOUT);
+  async setPageContent(content, pageId) {
+    return new Promise((resolve) => {
+      this.main.style.opacity = 0;
+      setTimeout(() => {
+        this.setBodyClassName(pageId);
+        this.main.replaceChildren(content);
+        this.main.style.opacity = 1;
+        document.dispatchEvent(new CustomEvent(`${pageId}Ready`));
+        resolve(true);
+      }, this.TRANSITION_TIMEOUT);
+    });
   }
 
   setBodyClassName(className) {

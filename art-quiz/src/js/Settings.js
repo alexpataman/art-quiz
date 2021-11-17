@@ -1,14 +1,15 @@
 import storage from './storage';
 import sounds from './sounds';
+import translate from './translate';
 
 class Settings {
   static DEFAULT_VALUES = {
-    enableSoundEffects: true,
+    enableSoundEffects: false,
     effectsVolumeLevel: sounds.getDefaultValue('defaultEffectsVolume'),
-    enableMusic: true,
+    enableMusic: false,
     musicVolumeLevel: sounds.getDefaultValue('defaultMusicVolume'),
     timeLimit: '10',
-    timeLimitedGame: true,
+    timeLimitedGame: false,
     language: 'en',
   };
 
@@ -17,6 +18,7 @@ class Settings {
   }
 
   init() {
+    translate.init(this.data.language);
     this.setSelectors();
     this.setHandlers();
     this.adjustDependentSections();
@@ -35,7 +37,7 @@ class Settings {
   setSelectors() {
     this.htmlContainer = document.querySelector('.settings');
     this.htmlContent = this.htmlContainer.querySelector('.content');
-    this.htmlToggleLink = this.htmlContainer.querySelector('.icon');
+    this.htmlToggleLink = document.querySelector('.settings-icon');
     this.htmlCloseLink = this.htmlContainer.querySelector('.close');
     this.htmlButtonClose = this.htmlContainer.querySelector('.save');
     this.htmlButtonReset = this.htmlContainer.querySelector('.reset');
@@ -54,6 +56,15 @@ class Settings {
 
   handleFormChange(event) {
     this.data = Object.fromEntries(new FormData(this.form).entries());
+
+    if (event.target.name === 'language') {
+      translate.applySettings(event.target.value);
+      document.dispatchEvent(new Event('changeLanguage'));
+    }
+
+    if (event.target.name === 'timeLimitedGame') {
+      document.dispatchEvent(new Event('changeTimeLimitedGameSetting'));
+    }
 
     if (event.target.name === 'enableMusic') {
       if (!event.target.checked) {

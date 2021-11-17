@@ -1,12 +1,14 @@
-.settings {
-  z-index: 1;
+.settings-icon {
+  display: block;
+  width: 34px;
+  height: 34px;
+  background-image: url('../assets/svg/settings.svg');
+  background-color: transparent;
+  border: none;
+}
 
-  .icon {
-    display: block;
-    width: 34px;
-    height: 34px;
-    background-image: url('../assets/svg/settings.svg');
-  }
+.settings {
+  z-index: 99999;
 
   .content {
     width: 100%;
@@ -36,6 +38,11 @@
         background-repeat: no-repeat;
         background-position: center;
       }
+    }
+
+    &.active {
+      overscroll-behavior: contain;
+      left: 0;
     }
 
     main {
@@ -115,9 +122,5 @@
         width: 100%;
       }
     }
-  }
-
-  .content.active {
-    left: 0;
   }
 }

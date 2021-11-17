@@ -1,4 +1,4 @@
-import layout from './Layout';
+import layout from './layout';
 import { timeout } from './utils';
 
 export default class Test {
@@ -18,8 +18,8 @@ export default class Test {
       .dispatchEvent(new Event('click'));
   }
 
-  async question(quizType) {
-    await this.quiz(quizType);
+  static async question(quizType) {
+    await Test.quiz(quizType);
 
     await timeout(510);
     document
