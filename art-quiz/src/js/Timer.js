@@ -8,7 +8,7 @@ export default class Timer {
   }
 
   init() {
-    if (!this.game.settings.data.timeLimitedGame) {
+    if (!this.game.settings.data.timeLimitedGame || layout.state !== 'question') {
       return;
     }
 

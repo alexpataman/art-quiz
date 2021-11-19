@@ -4,4 +4,4 @@ import Test from './js/Test';
 
 app.run();
 
-Test.question('pictures');
+// Test.question('pictures');

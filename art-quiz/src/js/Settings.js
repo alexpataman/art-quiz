@@ -50,8 +50,7 @@ export default class Settings {
   }
 
   resetSettings() {
-    this.data = Settings.DEFAULT_VALUES;
-    this.setFormData();
+    this.setFormData(Settings.DEFAULT_VALUES);
   }
 
   handleFormChange(event) {
@@ -69,14 +68,16 @@ export default class Settings {
     if (event.target.name === 'enableMusic') {
       if (!event.target.checked) {
         sounds.stopMusic();
-      } else {
+      } else if (event.isTrusted) {
         sounds.playMusic();
       }
     }
 
     if (event.target.name === 'effectsVolumeLevel') {
       sounds.setVolume('effects', event.target.value);
-      sounds.playEffect('answerCorrect');
+      if (event.isTrusted) {
+        sounds.playEffect('answerCorrect');
+      }
     }
 
     if (event.target.name === 'musicVolumeLevel') {
@@ -103,19 +104,33 @@ export default class Settings {
     });
   }
 
-  setFormData() {
+  setFormData(data) {
     const elements = this.form.querySelectorAll('input');
+    const elementsDispatchChangeEvents = [];
     elements.forEach((el, index) => {
       switch (el.type) {
         case 'checkbox':
-          elements[index].checked = !!this.data[el.name] === !!el.value;
+          if (data[el.name] !== el.value) {
+            elements[index].checked = !!data[el.name] === !!el.value;
+            elementsDispatchChangeEvents.push(el);
+          }
           break;
         case 'radio':
-          elements[index].checked = this.data[el.name] === el.value;
+          if (!elements[index].checked && data[el.name] === el.value) {
+            elements[index].checked = true;
+            elementsDispatchChangeEvents.push(el);
+          }
           break;
         default:
-          elements[index].value = this.data[el.name];
+          if (elements[index].value !== data[el.name]) {
+            elements[index].value = data[el.name];
+            elementsDispatchChangeEvents.push(el);
+          }
       }
+    });
+
+    elementsDispatchChangeEvents.forEach((el) => {
+      el.dispatchEvent(new Event('change', { bubbles: true }));
     });
   }
 
@@ -125,7 +140,7 @@ export default class Settings {
     this.htmlButtonClose.addEventListener('click', () => this.toggleSettings());
     this.htmlButtonClearStorage.addEventListener('click', () => Settings.clearStorage());
     this.form.addEventListener('change', (event) => this.handleFormChange(event));
-    document.addEventListener('DOMContentLoaded', () => this.setFormData());
+    document.addEventListener('DOMContentLoaded', () => this.setFormData(this.data));
     this.htmlButtonReset.addEventListener('click', () => {
       this.resetSettings();
     });

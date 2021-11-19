@@ -415,7 +415,11 @@ export default class Game {
     layout.startLoader();
     const html = document.createElement('div');
     const h2 = document.createElement('h2');
-    h2.textContent = `Какую картину нарисовал ${this.variables.currentQuestion.data.author}?`;
+    const questionPlaceholder = i18next.t(`Which picture did {{author}} paint?`);
+    h2.textContent = questionPlaceholder.replace(
+      '{{author}}',
+      this.variables.currentQuestion.data.author,
+    );
 
     const answerOptions = document.createElement('div');
     answerOptions.className = 'answer-options';

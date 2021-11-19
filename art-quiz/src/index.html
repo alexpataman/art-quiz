@@ -48,7 +48,7 @@
             <main>
                 <form action="#">
                     <fieldset class="language">
-                        <label for="language">Language</label>
+                        <label for="language" data-i18n="Language"></label>
                         <div class="row">
                             <div class="col">
                                 <label>
@@ -59,23 +59,23 @@
                             <div class="col">
                                 <label>
                                     <input name="language" type="radio" value="ru" />
-                                    <span>Russian</span>
+                                    <span>Русский</span>
                                 </label>
                             </div>
                         </div>
                     </fieldset>
                     <fieldset>
-                        <label for="enableSoundEffects">Sound Effects</label>
+                        <label for="enableSoundEffects" data-i18n="Sound Effects"></label>
                         <div class="switch">
                             <label>
-                                Off
+                                <span data-i18n="Off"></span>
                                 <input type="checkbox" name="enableSoundEffects" id="enableSoundEffects" value="true">
                                 <span class="lever"></span>
-                                On
+                                <span data-i18n="On"></span>
                             </label>
                         </div>
                         <div class="dependent" data-dependent-on="enableSoundEffects">
-                            <label for="effectsVolumeLevel">Volume of sound effects</label>
+                            <label for="effectsVolumeLevel" data-i18n="Volume of sound effects"></label>
                             <div class="range-field">
                                 <input type="range" id="effectsVolumeLevel" min="0" max="100"
                                     name="effectsVolumeLevel" />
@@ -83,17 +83,17 @@
                         </div>
                     </fieldset>
                     <fieldset>
-                        <label for="enableMusic">Music</label>
+                        <label for="enableMusic" data-i18n="Music"></label>
                         <div class="switch">
                             <label>
-                                Off
+                                <span data-i18n="Off"></span>
                                 <input type="checkbox" name="enableMusic" id="enableMusic" value="true">
                                 <span class="lever"></span>
-                                On
+                                <span data-i18n="On"></span>
                             </label>
                         </div>
                         <div class="dependent" data-dependent-on="enableMusic">
-                            <label for="musicVolumeLevel">Volume of music</label>
+                            <label for="musicVolumeLevel" data-i18n="Volume of music"></label>
                             <div class="range-field">
                                 <input type="range" id="musicVolumeLevel" min="0" max="100" name="musicVolumeLevel" />
                             </div>
@@ -101,17 +101,17 @@
 
                     </fieldset>
                     <fieldset>
-                        <label for="timeLimitedGame">Time Game</label>
+                        <label for="timeLimitedGame" data-i18n="Time Game"></label>
                         <div class="switch">
                             <label>
-                                Off
+                                <span data-i18n="Off"></span>
                                 <input type="checkbox" name="timeLimitedGame" id="timeLimitedGame" value="true">
                                 <span class="lever"></span>
-                                On
+                                <span data-i18n="On"></span>
                             </label>
                         </div>
                         <div class="dependent" data-dependent-on="timeLimitedGame">
-                            <label for="timeLimit">Time to answer</label>
+                            <label for="timeLimit" data-i18n="Time to answer"></label>
                             <div class="input-spinner">
                                 <button type="button" class="spinner-step" data-action="stepDown"
                                     onclick="this.nextElementSibling.stepDown(); this.closest('form').dispatchEvent(new Event('change'))">&ndash;</button>
@@ -124,18 +124,18 @@
                     </fieldset>
                     <fieldset>
                         <details>
-                            <summary>Danger Zone</summary>
+                            <summary data-i18n="Danger Zone"></summary>
                             <div>
-                                <small>All data and game progress will be reset</small>
-                                <button class="button-red clear-storage">Clear All Data</button>
+                                <small data-i18n="All data and game progress will be reset"></small>
+                                <button class="button-red clear-storage" data-i18n="Clear All Data"></button>
                             </div>
                         </details>
                     </fieldset>
                 </form>
             </main>
             <footer>
-                <button class="button reset">Default</button>
-                <button class="button-pink save">Close</button>
+                <button class="button reset" data-i18n="Default"></button>
+                <button class="button-pink save" data-i18n="Close"></button>
             </footer>
         </section>
     </div>

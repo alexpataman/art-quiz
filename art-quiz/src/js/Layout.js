@@ -6,10 +6,15 @@ class Layout {
     this.setSelectors();
     this.initModal();
     this.loadingItems = [];
+    this.state = null;
   }
 
   initModal() {
     this.modal = new Modal(document.getElementById('modal'));
+  }
+
+  setState(state) {
+    this.state = state;
   }
 
   startLoader() {
@@ -43,6 +48,7 @@ class Layout {
     return new Promise((resolve) => {
       this.main.style.opacity = 0;
       setTimeout(() => {
+        this.setState(pageId);
         this.setBodyClassName(pageId);
         this.main.replaceChildren(content);
         this.main.style.opacity = 1;
