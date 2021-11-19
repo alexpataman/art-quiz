@@ -2,7 +2,7 @@ import storage from './storage';
 import sounds from './sounds';
 import translate from './translate';
 
-class Settings {
+export default class Settings {
   static DEFAULT_VALUES = {
     enableSoundEffects: false,
     effectsVolumeLevel: sounds.getDefaultValue('defaultEffectsVolume'),
@@ -131,5 +131,3 @@ class Settings {
     });
   }
 }
-
-export default new Settings();

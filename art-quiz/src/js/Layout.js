@@ -5,18 +5,30 @@ class Layout {
     this.TRANSITION_TIMEOUT = 500;
     this.setSelectors();
     this.initModal();
-    this.customEvents = {};
-  }
-
-  getCustomEvent(eventName) {
-    if (!this.customEvents[eventName]) {
-      this.customEvents[eventName] = new Event(eventName);
-    }
-    return this.customEvents[eventName];
+    this.loadingItems = [];
   }
 
   initModal() {
     this.modal = new Modal(document.getElementById('modal'));
+  }
+
+  startLoader() {
+    this.main.classList.add('loading');
+  }
+
+  finishLoader() {
+    this.main.classList.remove('loading');
+  }
+
+  addLoadingItem(item) {
+    this.loadingItems.push(item);
+  }
+
+  removeLoadingItem(item) {
+    this.loadingItems = this.loadingItems.filter((el) => el === item);
+    if (this.loadingItems.length === 0) {
+      setTimeout(() => this.finishLoader(), 1000);
+    }
   }
 
   setSelectors() {

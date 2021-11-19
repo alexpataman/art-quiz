@@ -5,6 +5,10 @@
   background-image: url('../assets/svg/settings.svg');
   background-color: transparent;
   border: none;
+  cursor: pointer;
+  @include on-event() {
+    background-color: transparent;
+  }
 }
 
 .settings {

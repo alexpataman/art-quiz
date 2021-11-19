@@ -12,7 +12,7 @@ export default class Test {
   }
 
   static async quiz(quizType) {
-    await timeout(510);
+    await timeout(1000);
     document
       .querySelector(`.game-options a[data-id="${quizType}"]`)
       .dispatchEvent(new Event('click'));

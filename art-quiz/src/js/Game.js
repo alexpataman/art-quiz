@@ -1,15 +1,13 @@
-// import t from "./translate";
 import i18next from 'i18next';
 import storage from './storage';
 import layout from './layout';
-import DB from '../data/images';
+// import DB from '../data/images';
 import config from './config';
-import settings from './settings';
 import sounds from './sounds';
 import Timer from './Timer';
 // import * as utils from './utils';
 
-class Game {
+export default class Game {
   static QUIZ_TYPES = [
     { id: 'artist', title: 'Artist Quiz' },
     { id: 'pictures', title: 'Pictures Quiz' },
@@ -52,26 +50,27 @@ class Game {
     numberOfAnswerOptions: 4,
     delayAfterAnswer: 500,
     initRandomSort: false,
-    imagePath:
-      'https://raw.githubusercontent.com/alexpataman/image-data/master/img/{{imageNum}}.jpg',
+    storagePath: 'https://raw.githubusercontent.com/alexpataman/art-quiz-data/main',
   };
 
-  constructor() {
+  constructor(settings) {
+    this.settings = settings;
     this.variables = {
       gameType: null,
       currentRoundId: null,
       currentQuestionId: null,
       currentQuestion: null,
       currentAnswerOptions: null,
-      timer: new Timer(),
+      timer: new Timer(this),
     };
   }
 
-  init() {
+  async init() {
+    await this.fetchDb();
     this.prepareGameData();
     this.showHomePage();
     this.setHandlers();
-    Game.prepareSounds();
+    this.prepareSounds();
   }
 
   showHomePage() {
@@ -105,7 +104,6 @@ class Game {
   }
 
   async startQuestion(roundIndex, questionIndex = 0) {
-    // this.variables.timer = new Timer(this);
     this.variables.currentQuestionId = questionIndex;
     this.variables.currentQuestion = this.getQuestion(roundIndex, questionIndex);
     this.variables.currentAnswerOptions = Game.shuffleOptions(
@@ -116,11 +114,21 @@ class Game {
     await layout.setPageContent(this.getQuestionPageContent(), 'question');
     layout.addBackLink(this.showRoundSelectorPage, this);
     this.preloadNextQuestionImages();
-    this.variables.timer.init(this);
+    this.variables.timer.init();
+  }
+
+  async fetchDb() {
+    const request = await fetch(`${Game.SETTINGS.storagePath}/data.json`);
+    this.db = await request.json();
   }
 
   getQuestion(roundIndex, questionIndex) {
-    return this.data.quizzes[this.variables.gameType].rounds[roundIndex].questions[questionIndex];
+    return {
+      data: this.db[this.settings.data.language][
+        this.data.quizzes[this.variables.gameType].rounds[roundIndex].questions[questionIndex].data
+          .index
+      ],
+    };
   }
 
   static shuffleOptions(correctAnswer, wrongOptions) {
@@ -134,9 +142,8 @@ class Game {
    * - keep unique author names only
    */
   getWrongOptions() {
-    return DB.filter(
-      (el) => JSON.stringify(el) !== JSON.stringify(this.variables.currentQuestion.data),
-    )
+    return this.db[this.settings.data.language]
+      .filter((el) => JSON.stringify(el) !== JSON.stringify(this.variables.currentQuestion.data))
       .sort(() => 0.5 - Math.random())
       .reduce((acc, item) => {
         if (
@@ -243,7 +250,9 @@ class Game {
 
   getRoundStatisticsPageContent(roundId) {
     const html = document.createElement('section');
-    html.innerHTML = `<h1>${Game.QUIZ_CATEGORIES[settings.data.language][roundId]} / Score</h1>`;
+    html.innerHTML = `<h1>${
+      Game.QUIZ_CATEGORIES[this.settings.data.language][roundId]
+    } / Score</h1>`;
     const items = document.createElement('div');
     items.className = 'items';
     this.data.quizzes[this.variables.gameType].rounds[roundId].questions.forEach(
@@ -293,7 +302,7 @@ class Game {
 
       option.innerHTML = `
         <h3>
-          <span>${Game.QUIZ_CATEGORIES[settings.data.language][i]}</span>
+          <span>${Game.QUIZ_CATEGORIES[this.settings.data.language][i]}</span>
           <span class="score">
           ${roundStatistics.correct}/${roundStatistics.total}
           </span>
@@ -403,6 +412,7 @@ class Game {
   }
 
   getQuestionPicturesPageContent() {
+    layout.startLoader();
     const html = document.createElement('div');
     const h2 = document.createElement('h2');
     h2.textContent = `Какую картину нарисовал ${this.variables.currentQuestion.data.author}?`;
@@ -411,6 +421,9 @@ class Game {
     answerOptions.className = 'answer-options';
 
     this.variables.currentAnswerOptions.forEach((option, index) => {
+      const imgSrc = Game.getQuestionImageUrl(option.imageNum);
+      layout.addLoadingItem(imgSrc);
+      Game.preloadImage(imgSrc, () => layout.removeLoadingItem(imgSrc));
       const answerOption = document.createElement('img');
       answerOption.dataset.id = index;
       answerOption.alt = option.name;
@@ -437,9 +450,9 @@ class Game {
     }
 
     if (isCorrectAnswer) {
-      Game.playEffect('answerCorrect');
+      this.playEffect('answerCorrect');
     } else {
-      Game.playEffect('answerWrong');
+      this.playEffect('answerWrong');
     }
     this.highlightAnswers(userAnswerId);
     this.setUserAnswer(isCorrectAnswer);
@@ -497,14 +510,13 @@ class Game {
   }
 
   static getQuestionImageUrl(imageNum) {
-    return Game.SETTINGS.imagePath.replace('{{imageNum}}', imageNum);
+    return `${Game.SETTINGS.storagePath}/images/small/${imageNum}.jpg`;
   }
 
   getRoundImageUrl(roundId) {
-    return Game.SETTINGS.imagePath.replace(
-      '{{imageNum}}',
-      this.data.quizzes[this.variables.gameType].rounds[roundId].imageNum,
-    );
+    return `${Game.SETTINGS.storagePath}/images/small/${
+      this.data.quizzes[this.variables.gameType].rounds[roundId].imageNum
+    }.jpg`;
   }
 
   setupGameData() {
@@ -513,46 +525,43 @@ class Game {
       quizzes: {},
     };
 
+    this.setupQuestions();
+    this.saveGameData();
+  }
+
+  setupQuestions() {
+    let questions = [...this.db[this.settings.data.language]];
+    if (Game.SETTINGS.initRandomSort) {
+      questions = questions.sort(() => 0.5 - Math.random());
+    }
+
+    let i = 0;
+
     Game.QUIZ_TYPES.forEach((quizType) => {
       this.data.quizzes[quizType.id] = {
         rounds: [],
       };
-      this.setupQuestions(quizType.id);
-    });
 
-    this.saveGameData();
-  }
+      for (let r = 0; r < Game.SETTINGS.numberOfRounds; r += 1) {
+        const roundData = {
+          questions: [],
+          imageNum: null,
+        };
+        for (let q = 0; q < Game.SETTINGS.questionsPerRound; q += 1) {
+          roundData.questions.push({
+            data: { index: i, imageNum: questions[i].imageNum },
+            status: null,
+          });
+          i += 1;
+        }
+        roundData.imageNum =
+          roundData.questions[
+            Math.floor(Math.random() * Game.SETTINGS.questionsPerRound)
+          ].data.imageNum;
 
-  setupQuestions(quizType) {
-    if (DB.length <= Game.SETTINGS.numberOfRounds * Game.SETTINGS.questionsPerRound) {
-      throw new Error('Wrong game settings. Number of questions in the database is too low.');
-    }
-
-    let questions = [...DB];
-    if (Game.SETTINGS.initRandomSort) {
-      questions = questions.sort(() => 0.5 - Math.random());
-    }
-    questions = questions.slice(0, Game.SETTINGS.numberOfRounds * Game.SETTINGS.questionsPerRound);
-
-    let i = 0;
-    for (let r = 0; r < Game.SETTINGS.numberOfRounds; r += 1) {
-      const roundData = {
-        questions: [],
-        imageNum: null,
-      };
-      for (let q = 0; q < Game.SETTINGS.questionsPerRound; q += 1) {
-        roundData.questions.push({
-          data: questions[i],
-          status: null,
-        });
-        i += 1;
+        this.data.quizzes[quizType.id].rounds.push(roundData);
       }
-      roundData.imageNum =
-        roundData.questions[
-          Math.floor(Math.random() * Game.SETTINGS.questionsPerRound)
-        ].data.imageNum;
-      this.data.quizzes[quizType].rounds.push(roundData);
-    }
+    });
   }
 
   /**
@@ -603,22 +612,22 @@ class Game {
   startGame(event) {
     this.variables.gameType = event.target.dataset.id;
     this.showRoundSelectorPage();
-    Game.playMusic();
+    this.playMusic();
   }
 
-  static prepareSounds() {
-    sounds.setVolume('music', settings.data.musicVolumeLevel);
-    sounds.setVolume('effects', settings.data.musicVolumeLevel);
+  prepareSounds() {
+    sounds.setVolume('music', this.settings.data.musicVolumeLevel);
+    sounds.setVolume('effects', this.settings.data.musicVolumeLevel);
   }
 
-  static playMusic() {
-    if (settings.data.enableMusic) {
+  playMusic() {
+    if (this.settings.data.enableMusic) {
       sounds.playMusic();
     }
   }
 
-  static playEffect(key) {
-    if (settings.data.enableSoundEffects) {
+  playEffect(key) {
+    if (this.settings.data.enableSoundEffects) {
       sounds.playEffect(key);
     }
   }
@@ -635,4 +644,4 @@ class Game {
   }
 }
 
-export default new Game();
+// export default new Game();

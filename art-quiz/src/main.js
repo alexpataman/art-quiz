@@ -1,13 +1,7 @@
 import './css/main.scss';
-import settings from './js/settings';
-import game from './js/game';
-// import Test from './js/Test';
+import app from './js/app';
+import Test from './js/Test';
 
-settings.init();
-game.init();
+app.run();
 
-// Test.settings();
-// Test.question('artist');
-// Test.question('pictures');
-// Test.quiz('artist');
-// Test.modal();
+Test.question('pictures');

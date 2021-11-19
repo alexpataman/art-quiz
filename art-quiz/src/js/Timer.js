@@ -1,14 +1,22 @@
-import settings from './settings';
 import layout from './layout';
 import * as utils from './utils';
 
 export default class Timer {
-  constructor() {
+  constructor(game) {
+    this.game = game;
+    document.addEventListener('changeTimeLimitedGameSetting', () => this.verifySettings());
+  }
+
+  init() {
+    if (!this.game.settings.data.timeLimitedGame) {
+      return;
+    }
+
     this.settings = {
       FULL_DASH_ARRAY: 283,
-      TIME_LIMIT: settings.data.timeLimit,
-      WARNING_THRESHOLD: settings.data.timeLimit * 0.6,
-      ALERT_THRESHOLD: settings.data.timeLimit * 0.3,
+      TIME_LIMIT: this.game.settings.data.timeLimit,
+      WARNING_THRESHOLD: this.game.settings.data.timeLimit * 0.6,
+      ALERT_THRESHOLD: this.game.settings.data.timeLimit * 0.3,
     };
 
     this.COLOR_CODES = {
@@ -25,15 +33,6 @@ export default class Timer {
       },
     };
 
-    document.addEventListener('changeTimeLimitedGameSetting', () => this.verifySettings());
-  }
-
-  init(game) {
-    if (!settings.data.timeLimitedGame) {
-      return;
-    }
-
-    this.game = game;
     this.game.variables.timer.stop();
     this.container = Timer.getContainer();
     layout.main.append(this.container);
@@ -92,8 +91,10 @@ export default class Timer {
   }
 
   verifySettings() {
-    if (!settings.data.timeLimitedGame) {
+    if (!this.game.settings.data.timeLimitedGame) {
       this.destroy();
+    } else {
+      this.init();
     }
   }
 
