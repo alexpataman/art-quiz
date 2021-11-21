@@ -1,24 +1,22 @@
-import storage from './storage';
-import sounds from './sounds';
-import translate from './translate';
-
 export default class Settings {
-  static DEFAULT_VALUES = {
-    enableSoundEffects: false,
-    effectsVolumeLevel: sounds.getDefaultValue('defaultEffectsVolume'),
-    enableMusic: false,
-    musicVolumeLevel: sounds.getDefaultValue('defaultMusicVolume'),
-    timeLimit: '10',
-    timeLimitedGame: false,
-    language: 'en',
-  };
+  constructor(app) {
+    this.app = app;
 
-  constructor() {
-    this.data = Settings.getSettings();
+    this.DEFAULT_VALUES = {
+      enableSoundEffects: false,
+      effectsVolumeLevel: this.app.sounds.getDefaultValue('defaultEffectsVolume'),
+      enableMusic: false,
+      musicVolumeLevel: this.app.sounds.getDefaultValue('defaultMusicVolume'),
+      timeLimit: '10',
+      timeLimitedGame: false,
+      language: 'en',
+    };
+
+    this.data = this.getSettings();
   }
 
   init() {
-    translate.init(this.data.language);
+    this.app.translations.init(this.data.language);
     this.setSelectors();
     this.setHandlers();
     this.adjustDependentSections();
@@ -50,14 +48,14 @@ export default class Settings {
   }
 
   resetSettings() {
-    this.setFormData(Settings.DEFAULT_VALUES);
+    this.setFormData(this.DEFAULT_VALUES);
   }
 
   handleFormChange(event) {
     this.data = Object.fromEntries(new FormData(this.form).entries());
 
     if (event.target.name === 'language') {
-      translate.applySettings(event.target.value);
+      this.app.translations.applySettings(event.target.value);
       document.dispatchEvent(new Event('changeLanguage'));
     }
 
@@ -67,21 +65,21 @@ export default class Settings {
 
     if (event.target.name === 'enableMusic') {
       if (!event.target.checked) {
-        sounds.stopMusic();
+        this.app.sounds.stopMusic();
       } else if (event.isTrusted) {
-        sounds.playMusic();
+        this.app.sounds.playMusic();
       }
     }
 
     if (event.target.name === 'effectsVolumeLevel') {
-      sounds.setVolume('effects', event.target.value);
+      this.app.sounds.setVolume('effects', event.target.value);
       if (event.isTrusted) {
-        sounds.playEffect('answerCorrect');
+        this.app.sounds.playEffect('answerCorrect');
       }
     }
 
     if (event.target.name === 'musicVolumeLevel') {
-      sounds.setVolume('music', event.target.value);
+      this.app.sounds.setVolume('music', event.target.value);
     }
 
     this.saveSettings();
@@ -89,16 +87,18 @@ export default class Settings {
   }
 
   saveSettings() {
-    storage.set('settings', this.data);
+    this.app.storage.set('settings', this.data);
     document.dispatchEvent(new Event('updateSettings'));
   }
 
-  static getSettings() {
-    return storage.exists('settings') ? storage.get('settings') : Settings.DEFAULT_VALUES;
+  getSettings() {
+    return this.app.storage.exists('settings')
+      ? this.app.storage.get('settings')
+      : this.DEFAULT_VALUES;
   }
 
-  static clearStorage() {
-    storage.clear();
+  clearStorage() {
+    this.app.storage.clear();
     setTimeout(() => {
       window.location.reload();
     });
@@ -138,7 +138,7 @@ export default class Settings {
     this.htmlToggleLink.addEventListener('click', () => this.toggleSettings());
     this.htmlCloseLink.addEventListener('click', () => this.toggleSettings());
     this.htmlButtonClose.addEventListener('click', () => this.toggleSettings());
-    this.htmlButtonClearStorage.addEventListener('click', () => Settings.clearStorage());
+    this.htmlButtonClearStorage.addEventListener('click', () => this.clearStorage());
     this.form.addEventListener('change', (event) => this.handleFormChange(event));
     document.addEventListener('DOMContentLoaded', () => this.setFormData(this.data));
     this.htmlButtonReset.addEventListener('click', () => {

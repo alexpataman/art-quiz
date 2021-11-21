@@ -1,22 +1,21 @@
-import layout from './layout';
 import * as utils from './utils';
 
 export default class Timer {
-  constructor(game) {
-    this.game = game;
+  constructor(quiz) {
+    this.quiz = quiz;
     document.addEventListener('changeTimeLimitedGameSetting', () => this.verifySettings());
   }
 
   init() {
-    if (!this.game.settings.data.timeLimitedGame || layout.state !== 'question') {
+    if (!this.quiz.settings.data.timeLimitedGame || this.quiz.app.layout.state !== 'question') {
       return;
     }
 
     this.settings = {
       FULL_DASH_ARRAY: 283,
-      TIME_LIMIT: this.game.settings.data.timeLimit,
-      WARNING_THRESHOLD: this.game.settings.data.timeLimit * 0.6,
-      ALERT_THRESHOLD: this.game.settings.data.timeLimit * 0.3,
+      TIME_LIMIT: this.quiz.settings.data.timeLimit,
+      WARNING_THRESHOLD: this.quiz.settings.data.timeLimit * 0.6,
+      ALERT_THRESHOLD: this.quiz.settings.data.timeLimit * 0.3,
     };
 
     this.COLOR_CODES = {
@@ -33,9 +32,9 @@ export default class Timer {
       },
     };
 
-    this.game.variables.timer.stop();
+    this.quiz.variables.timer.stop();
     this.container = Timer.getContainer();
-    layout.main.append(this.container);
+    this.quiz.app.layout.main.append(this.container);
     this.timePassed = 0;
     this.timeLeft = this.settings.TIME_LIMIT;
     this.timerInterval = null;
@@ -85,13 +84,13 @@ export default class Timer {
 
   onTimesUp() {
     this.stop();
-    if (layout.body.classList.contains('question')) {
-      this.game.processAnswer();
+    if (this.quiz.app.layout.body.classList.contains('question')) {
+      this.quiz.processAnswer();
     }
   }
 
   verifySettings() {
-    if (!this.game.settings.data.timeLimitedGame) {
+    if (!this.quiz.settings.data.timeLimitedGame) {
       this.destroy();
     } else {
       this.init();

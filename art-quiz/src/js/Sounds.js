@@ -1,4 +1,4 @@
-class Sounds {
+export default class Sounds {
   static DEFAULT_VALUES = {
     defaultEffectsVolume: 50,
     defaultMusicVolume: 30,
@@ -57,5 +57,3 @@ class Sounds {
     this.instances.music[key].pause();
   }
 }
-
-export default new Sounds();

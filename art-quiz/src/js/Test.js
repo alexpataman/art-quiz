@@ -1,14 +1,17 @@
-import layout from './layout';
 import { timeout } from './utils';
 
 export default class Test {
+  constructor(layout) {
+    this.layout = layout;
+  }
+
   static async settings() {
     await timeout(510);
     document.querySelector(`.settings .icon`).dispatchEvent(new Event('click'));
   }
 
   static modal() {
-    layout.openModal('test');
+    this.layout.openModal('test');
   }
 
   static async quiz(quizType) {

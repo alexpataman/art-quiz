@@ -1,12 +1,12 @@
 import Modal from './Modal';
 
-class Layout {
+export default class Layout {
   constructor() {
     this.TRANSITION_TIMEOUT = 500;
-    this.setSelectors();
-    this.initModal();
     this.loadingItems = [];
     this.state = null;
+    this.setSelectors();
+    this.initModal();
   }
 
   initModal() {
@@ -79,5 +79,3 @@ class Layout {
     return el;
   }
 }
-
-export default new Layout();

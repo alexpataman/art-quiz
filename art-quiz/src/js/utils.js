@@ -17,19 +17,19 @@ function createElement(tagName, className, content) {
   return element;
 }
 
-function fetchBlob(url) {
-  return fetch(url)
-    .then((response) => response.blob())
-    .then((blob) => URL.createObjectURL(blob));
+async function fetchBlob(url) {
+  const response = await fetch(url);
+  const blob = await response.blob();
+  return URL.createObjectURL(blob);
 }
 
 async function download(url, name) {
-  const a = document.createElement('a');
-  a.href = await fetchBlob(url);
-  a.download = name + url.slice(url.lastIndexOf('.'));
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
+  const link = document.createElement('a');
+  link.href = await fetchBlob(url);
+  link.download = name + url.slice(url.lastIndexOf('.'));
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
 }
 
 export { timeout, createElement, download };

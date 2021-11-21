@@ -1,7 +1,7 @@
 import i18next from 'i18next';
 import locI18next from 'loc-i18next';
 
-class Translate {
+export default class Translations {
   RESOURCES = {
     ru: {
       translation: {
@@ -62,5 +62,3 @@ class Translate {
     this.localize('*');
   }
 }
-
-export default new Translate();

@@ -1,16 +1,23 @@
+import Storage from './Storage';
+import Layout from './Layout';
+import Sounds from './Sounds';
+import Translations from './Translations';
 import Settings from './Settings';
-import Game from './Game';
-// import Test from './js/Test';
+import Quiz from './Quiz';
 
 class App {
   constructor() {
-    this.settings = new Settings();
-    this.game = new Game(this.settings);
+    this.storage = new Storage();
+    this.layout = new Layout();
+    this.sounds = new Sounds();
+    this.translations = new Translations();
+    this.settings = new Settings(this);
+    this.quiz = new Quiz(this);
   }
 
   run() {
     this.settings.init();
-    this.game.init();
+    this.quiz.init();
   }
 }
 

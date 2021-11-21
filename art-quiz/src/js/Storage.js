@@ -1,6 +1,6 @@
 import config from './config';
 
-class Storage {
+export default class Storage {
   constructor() {
     this.prefix = config.localStoragePrefix;
   }
@@ -31,5 +31,3 @@ class Storage {
     });
   }
 }
-
-export default new Storage();

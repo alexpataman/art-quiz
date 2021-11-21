@@ -1,6 +1,4 @@
-const config = {
+export default {
   debug: false,
   localStoragePrefix: 'alexpArtQuiz_',
 };
-
-export default config;
