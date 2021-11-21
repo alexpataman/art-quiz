@@ -1,12 +1,8 @@
 body.home {
-  background-image: url('../assets/img/bg_home_s.jpg');
-
-  // @include breakpoint(medium) {
-  //   background-image: url('../assets/img/bg_home_m.jpg');
-  // }
+  background-image: url('../assets/img/bg_home_s.jpeg');
 
   @media screen and (min-width: 502px) {
-    background-image: url('../assets/img/bg_home_m.jpg');
+    background-image: url('../assets/img/bg_home_m.jpeg');
     background-size: cover;
   }
 
