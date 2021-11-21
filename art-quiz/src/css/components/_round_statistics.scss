@@ -54,9 +54,24 @@
 
   #modal {
     .modal-content {
+      .download {
+        margin: 10px 0 0;
+        a {
+          background: url('../assets/svg/download.svg') 0 0 no-repeat;
+          padding-left: 30px;
+          display: inline-block;
+          color: $primary-color;
+          &:hover {
+            text-decoration: none;
+          }
+        }
+      }
+
       figure {
         margin-bottom: 15px;
         position: relative;
+        display: inline-block;
+
         &::before {
           content: '';
           position: absolute;

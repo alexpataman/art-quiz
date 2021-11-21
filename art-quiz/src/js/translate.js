@@ -22,7 +22,7 @@ class Translate {
         'Clear All Data': 'Очистить данные',
         Default: 'Сбросить',
         Close: 'Закрыть',
-        'Which picture did {{author}} paint?': 'Какую картину нарисовал {{author}}?',
+        'Which picture was painted by {{author}}?': 'Какую картину нарисовал {{author}}?',
         'Play Again': 'Ещё раз',
         Score: 'Результаты',
         Next: 'Продолжить',
@@ -31,6 +31,7 @@ class Translate {
         'Grand result': 'Отлично',
         Home: 'Главная',
         'Next Quiz': 'Далее',
+        Download: 'Скачать',
       },
     },
   };

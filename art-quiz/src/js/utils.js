@@ -17,8 +17,19 @@ function createElement(tagName, className, content) {
   return element;
 }
 
-function throttle() {}
+function fetchBlob(url) {
+  return fetch(url)
+    .then((response) => response.blob())
+    .then((blob) => URL.createObjectURL(blob));
+}
 
-function debounce() {}
+async function download(url, name) {
+  const a = document.createElement('a');
+  a.href = await fetchBlob(url);
+  a.download = name + url.slice(url.lastIndexOf('.'));
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
 
-export { timeout, throttle, debounce, createElement };
+export { timeout, createElement, download };

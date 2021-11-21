@@ -34,7 +34,7 @@ module.exports = {
   devServer: {
     static: './dist',
     open: true,
-    port: 4202,
+    port: 4203,
     hot: isDev,
   },
   devtool: isDev ? 'source-map' : false,

@@ -32,6 +32,15 @@
           max-width: 600px;
           margin-left: auto;
           margin-right: auto;
+
+          &.pictures {
+            max-width: 1024px;
+            row-gap: 15px;
+            & > img {
+              width: calc(50% - 10px);
+              margin-bottom: 0;
+            }
+          }
         }
 
         & > img {
@@ -107,10 +116,13 @@
 
   #modal {
     .modal-content {
+      text-align: center;
+
       figure {
         margin-bottom: 15px;
         position: relative;
         display: inline-block;
+
         &::before {
           content: '';
           position: absolute;
@@ -130,7 +142,20 @@
           background-image: url('../assets/svg/answer_correct.svg');
         }
       }
-      text-align: center;
+
+      .download {
+        margin: 10px 0 0;
+        a {
+          background: url('../assets/svg/download.svg') 0 0 no-repeat;
+          padding-left: 30px;
+          display: inline-block;
+          color: $primary-color;
+          &:hover {
+            text-decoration: none;
+          }
+        }
+      }
+
       h3 {
         font-size: 24px;
       }

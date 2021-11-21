@@ -5,7 +5,7 @@ import layout from './layout';
 import config from './config';
 import sounds from './sounds';
 import Timer from './Timer';
-// import * as utils from './utils';
+import * as utils from './utils';
 
 export default class Game {
   static QUIZ_TYPES = [
@@ -216,7 +216,7 @@ export default class Game {
         <img 
         src="${Game.getQuestionImageUrl(question.data.imageNum)}" 
         title="${question.data.name}" 
-        alt="${question.data.name}">
+        alt="${question.data.name}">        
       </figure>
       <div class="details">
         <h3>${question.data.name}</h3>
@@ -224,8 +224,18 @@ export default class Game {
           ${question.data.author}, 
           ${question.data.year}
         </i> 
+        <div class="download"><a href="#">${i18next.t(`Download`)}</a></div>
       </div>            
     `;
+
+    html
+      .querySelector('.download')
+      .addEventListener('click', () =>
+        utils.download(
+          Game.getQuestionImageFullUrl(question.data.imageNum),
+          `${question.data.author}-${question.data.name}[${question.data.year}]`,
+        ),
+      );
 
     const button = document.createElement('button');
     if (showNextButton) {
@@ -400,7 +410,7 @@ export default class Game {
     const html = document.createElement('div');
     const image = document.createElement('img');
     const answerOptions = document.createElement('div');
-    answerOptions.className = 'answer-options';
+    answerOptions.className = 'answer-options artists';
 
     image.src = Game.getQuestionImageUrl(this.variables.currentQuestion.data.imageNum);
     this.variables.currentAnswerOptions.forEach((option, index) => {
@@ -420,14 +430,14 @@ export default class Game {
     layout.startLoader();
     const html = document.createElement('div');
     const h2 = document.createElement('h2');
-    const questionPlaceholder = i18next.t(`Which picture did {{author}} paint?`);
+    const questionPlaceholder = i18next.t(`Which picture was painted by {{author}}?`);
     h2.textContent = questionPlaceholder.replace(
       '{{author}}',
       this.variables.currentQuestion.data.author,
     );
 
     const answerOptions = document.createElement('div');
-    answerOptions.className = 'answer-options';
+    answerOptions.className = 'answer-options pictures';
 
     this.variables.currentAnswerOptions.forEach((option, index) => {
       const imgSrc = Game.getQuestionImageUrl(option.imageNum);
@@ -520,6 +530,10 @@ export default class Game {
 
   static getQuestionImageUrl(imageNum) {
     return `${Game.SETTINGS.storagePath}/images/small/${imageNum}.jpg`;
+  }
+
+  static getQuestionImageFullUrl(imageNum) {
+    return `${Game.SETTINGS.storagePath}/images/full/${imageNum}full.jpg`;
   }
 
   getRoundImageUrl(roundId) {

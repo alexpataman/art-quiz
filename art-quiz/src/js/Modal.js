@@ -28,16 +28,9 @@ export default class Modal {
 
   showOverlay() {
     this.overlayElement.classList.add('visible');
-    // document.body.insertAdjacentHTML(
-    //   'beforeend',
-    //   '<div class="modal-overlay"></div>',
-    // );
   }
 
   removeOverlay() {
     this.overlayElement.classList.remove('visible');
-    // document.body.querySelectorAll('.modal-overlay').forEach(element => {
-    //   element.remove()
-    // });
   }
 }
