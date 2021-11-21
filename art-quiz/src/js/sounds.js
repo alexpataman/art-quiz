@@ -7,10 +7,11 @@ class Sounds {
   static effectsFiles = {
     answerCorrect: './assets/sounds/answer_correct.mp3',
     answerWrong: './assets/sounds/answer_wrong.mp3',
+    roundEnd: './assets/sounds/round_end.mp3',
   };
 
   static musicFiles = {
-    music: './assets/sounds/music.mp3',
+    music: 'https://raw.githubusercontent.com/alexpataman/art-quiz-data/main/sounds/music/main.mp3',
   };
 
   constructor() {

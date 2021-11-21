@@ -489,10 +489,10 @@ export default class Game {
       this.startQuestion(this.variables.currentRoundId, this.variables.currentQuestionId);
     } else {
       this.saveGameData();
-      setTimeout(
-        () => layout.modal.open(this.getQuestionFinalModalContent()),
-        Game.SETTINGS.delayAfterAnswer,
-      );
+      setTimeout(() => {
+        this.playEffect('roundEnd');
+        layout.modal.open(this.getQuestionFinalModalContent());
+      }, Game.SETTINGS.delayAfterAnswer);
     }
   }
 
