@@ -6,8 +6,14 @@
   background-color: transparent;
   border: none;
   cursor: pointer;
+  transform: rotate(-90deg);
+  transition: 1s;
   @include on-event() {
     background-color: transparent;
+  }
+
+  &:hover {
+    transform: rotate(90deg);
   }
 }
 
@@ -126,6 +132,14 @@
 
       button {
         width: 100%;
+      }
+
+      @include breakpoint(large) {
+        justify-content: right;
+
+        button {
+          width: auto;
+        }
       }
     }
   }
