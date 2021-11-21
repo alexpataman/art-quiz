@@ -11,8 +11,9 @@ body.home {
   }
 
   @media screen and (min-width: 798px) {
-    background-image: url('../assets/img/bg_home_l.jpg');
-    background-size: cover;
+    background-image: url('../assets/img/bg_home_l.jpeg');
+    background-size: auto;
+    background-position: top;
   }
 
   background-position: bottom center;
@@ -46,13 +47,36 @@ body.home {
         width: 166px;
         height: 62px;
         margin: 0 auto;
-        background-image: url('../assets/svg/logo.svg');
+        background: url('../assets/svg/logo.svg') center no-repeat;
         margin-bottom: 12px;
+      }
+
+      @include breakpoint(medium) {
+        bottom: 0;
+        top: 0;
+      }
+
+      @include breakpoint(large) {
+        flex-direction: row;
+        flex-wrap: wrap;
+        max-width: 600px;
+        align-content: center;
+        row-gap: 100px;
+        margin: auto;
+        &::before {
+          flex-basis: 100%;
+          width: 332px;
+          height: 124px;
+          background-size: 100% 100%;
+        }
       }
 
       a {
         @extend .button;
         width: 268px;
+        @include on-event() {
+          text-decoration: none;
+        }
       }
     }
   }

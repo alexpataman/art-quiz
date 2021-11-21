@@ -56,6 +56,7 @@
       fieldset {
         border: 0;
         padding-top: 0;
+        margin-bottom: 15px;
 
         & > label {
           display: block;
@@ -121,6 +122,7 @@
       justify-content: space-between;
       gap: 16px;
       padding: 10px 16px;
+      margin-bottom: 5px;
 
       button {
         width: 100%;

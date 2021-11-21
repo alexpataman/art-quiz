@@ -8,6 +8,14 @@
     & > div {
       flex-basis: calc(50% - 10px);
 
+      @include breakpoint(medium) {
+        flex-basis: calc(33% - 10px);
+      }
+
+      @include breakpoint(large) {
+        flex-basis: calc(16% - 10px);
+      }
+
       img {
         max-width: 100%;
         border-radius: $primary-border-radius;
@@ -55,7 +63,7 @@
         }
       }
 
-      &.touched {
+      .touched {
         .hover {
           bottom: 0;
         }

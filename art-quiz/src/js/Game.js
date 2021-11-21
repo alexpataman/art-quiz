@@ -170,19 +170,19 @@ export default class Game {
       html.innerHTML = `      
       <div class="great">
         <img src="./assets/svg/round_stars.svg">
-        <h3>Grand result</h3>        
+        <h3>${i18next.t(`Grand result`)}</h3>        
       </div>`;
     } else if (roundStatistics.correct > 0) {
       html.innerHTML = `      
       <div class="normal">
         <img src="./assets/svg/round_cup.svg">
-        <h3>Congratulations!</h3>        
+        <h3>${i18next.t(`Congratulations!`)}</h3>        
       </div>`;
     } else {
       html.innerHTML = `      
       <div class="fail">
         <img src="./assets/svg/round_broken_cup.svg">
-        <h3>Good luck next time!</h3>        
+        <h3>${i18next.t(`Good luck next time!`)}</h3>        
       </div>`;
     }
 
@@ -191,8 +191,8 @@ export default class Game {
         ${roundStatistics.correct}/${roundStatistics.total}
       </div>
       <div class="nav">
-        <button class="button-white home-page">Home</button>      
-        <button class="button-pink next-quiz">Next Quiz</button>      
+        <button class="button-white home-page">${i18next.t(`Home`)}</button>      
+        <button class="button-pink next-quiz">${i18next.t(`Next Quiz`)}</button>      
       </div>
     `;
 
@@ -230,14 +230,14 @@ export default class Game {
     const button = document.createElement('button');
     if (showNextButton) {
       button.className = 'button-pink next-question';
-      button.textContent = 'Next';
+      button.textContent = i18next.t(`Next`);
       button.addEventListener('click', () => {
         layout.modal.close();
         this.nextQuestion();
       });
     } else {
       button.className = 'button-pink';
-      button.textContent = 'Close';
+      button.textContent = i18next.t(`Close`);
       button.addEventListener('click', () => {
         layout.modal.close();
       });
@@ -252,7 +252,7 @@ export default class Game {
     const html = document.createElement('section');
     html.innerHTML = `<h1>${
       Game.QUIZ_CATEGORIES[this.settings.data.language][roundId]
-    } / Score</h1>`;
+    } / ${i18next.t(`Score`)}</h1>`;
     const items = document.createElement('div');
     items.className = 'items';
     this.data.quizzes[this.variables.gameType].rounds[roundId].questions.forEach(
@@ -264,7 +264,9 @@ export default class Game {
         <img src="${Game.getQuestionImageUrl(question.data.imageNum)}" alr="">        
       `;
         item.addEventListener('click', () => {
-          layout.modal.open(this.getQuestionAnswerModalContent(question, question.status));
+          layout.modal.open(
+            this.getQuestionAnswerModalContent(this.getQuestion(roundId, index), question.status),
+          );
         });
         items.append(item);
       },
@@ -279,18 +281,6 @@ export default class Game {
       const roundStatistics = this.getRoundStatistics(i);
       const option = document.createElement('div');
       option.dataset.roundId = i;
-      if (roundStatistics.correct + roundStatistics.wrong) {
-        option.addEventListener('click', (event) => {
-          layout.main.querySelectorAll('.touched').forEach((el) => {
-            el.classList.remove('touched');
-          });
-          event.currentTarget.classList.add('touched');
-        });
-      } else {
-        option.addEventListener('click', (event) => {
-          this.startRound(event.currentTarget.dataset.roundId);
-        });
-      }
 
       if (roundStatistics.correct === roundStatistics.total) {
         option.className = 'success';
@@ -303,26 +293,41 @@ export default class Game {
       option.innerHTML = `
         <h3>
           <span>${Game.QUIZ_CATEGORIES[this.settings.data.language][i]}</span>
-          <span class="score">
+          <span class="score" data-round-id="${i}">
           ${roundStatistics.correct}/${roundStatistics.total}
           </span>
         </h3>
         <div class="category-image">
           <img src="${this.getRoundImageUrl(i)}" alr="">        
           <div class="hover">
-            <a href="#" class="statistics" data-round-id="${i}">Score</a>
-            <a href="#" class="play-again" data-round-id="${i}">Play Again</a>
+            <a href="#" class="statistics" data-round-id="${i}">${i18next.t(`Score`)}</a>
+            <a href="#" class="play-again" data-round-id="${i}">${i18next.t(`Play Again`)}</a>
           </div>
         </div>        
       `;
 
-      option.querySelector('.statistics').addEventListener('click', (event) => {
-        this.showRoundStatisticsPage(event.currentTarget.dataset.roundId);
-      });
+      option.querySelectorAll('.statistics, .score').forEach((el) =>
+        el.addEventListener('click', (event) => {
+          this.showRoundStatisticsPage(event.currentTarget.dataset.roundId);
+        }),
+      );
 
       option
         .querySelector('.play-again')
         .addEventListener('click', (event) => this.startRound(event.currentTarget.dataset.roundId));
+
+      if (roundStatistics.correct + roundStatistics.wrong) {
+        option.querySelector('.category-image').addEventListener('click', (event) => {
+          layout.main.querySelectorAll('.touched').forEach((el) => {
+            el.classList.remove('touched');
+          });
+          event.currentTarget.classList.add('touched');
+        });
+      } else {
+        option.addEventListener('click', (event) => {
+          this.startRound(event.currentTarget.dataset.roundId);
+        });
+      }
 
       html.append(option);
     }

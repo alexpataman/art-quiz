@@ -15,9 +15,3 @@ class App {
 }
 
 export default new App();
-
-// Test.settings();
-// Test.question('artist');
-// Test.question('pictures');
-// Test.quiz('artist');
-// Test.modal();

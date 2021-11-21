@@ -115,8 +115,8 @@
                             <div class="input-spinner">
                                 <button type="button" class="spinner-step" data-action="stepDown"
                                     onclick="this.nextElementSibling.stepDown(); this.closest('form').dispatchEvent(new Event('change'))">&ndash;</button>
-                                <input name="timeLimit" id="timeLimit" type="number" min="10" max="60" value="30"
-                                    readonly class="number">
+                                <input name="timeLimit" id="timeLimit" type="number" min="5" max="30" value="10"
+                                    step="5" readonly class="number">
                                 <button type="button" class="spinner-step" data-action="stepUp"
                                     onclick="this.previousElementSibling.stepUp(); this.closest('form').dispatchEvent(new Event('change'))">+</button>
                             </div>
@@ -124,7 +124,7 @@
                     </fieldset>
                     <fieldset>
                         <details>
-                            <summary data-i18n="Danger Zone"></summary>
+                            <summary data-i18n="Data Reset"></summary>
                             <div>
                                 <small data-i18n="All data and game progress will be reset"></small>
                                 <button class="button-red clear-storage" data-i18n="Clear All Data"></button>

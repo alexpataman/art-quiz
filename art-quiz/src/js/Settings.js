@@ -110,7 +110,7 @@ export default class Settings {
     elements.forEach((el, index) => {
       switch (el.type) {
         case 'checkbox':
-          if (data[el.name] !== el.value) {
+          if (!!data[el.name] !== !!el.checked) {
             elements[index].checked = !!data[el.name] === !!el.value;
             elementsDispatchChangeEvents.push(el);
           }

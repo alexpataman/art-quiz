@@ -7,6 +7,9 @@
   opacity: 0;
   top: -100vh;
   transition: top 0.5s;
+  @include breakpoint(large) {
+    max-width: 700px;
+  }
 
   &.open {
     z-index: 1003;

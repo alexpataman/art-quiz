@@ -9,6 +9,15 @@
       & > div {
         flex-basis: calc(50% - 10px);
         position: relative;
+
+        @include breakpoint(medium) {
+          flex-basis: calc(20% - 10px);
+        }
+
+        @include breakpoint(large) {
+          flex-basis: calc(20% - 10px);
+        }
+
         img {
           max-width: 100%;
           border-radius: $primary-border-radius;
