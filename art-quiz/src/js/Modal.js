@@ -8,16 +8,20 @@ export default class Modal {
   }
 
   async open(content = '') {
+    document.body.classList.add('modal-open');
     this.modalContent.replaceChildren(content);
     this.modalContainer.classList.add('open');
     this.showOverlay();
     this.isOpen = true;
+    Modal.fixBody();
   }
 
   close() {
+    document.body.classList.remove('modal-open');
     this.modalContainer.classList.remove('open');
     this.removeOverlay();
     this.isOpen = false;
+    Modal.unfixBody();
   }
 
   static createOverlayElement() {
@@ -32,5 +36,15 @@ export default class Modal {
 
   removeOverlay() {
     this.overlayElement.classList.remove('visible');
+  }
+
+  static fixBody() {
+    document.body.style.top = `-${window.scrollY}px`;
+    document.body.style.position = 'fixed';
+  }
+
+  static unfixBody() {
+    document.body.style.position = '';
+    document.body.style.top = '';
   }
 }

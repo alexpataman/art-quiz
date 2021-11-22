@@ -1,3 +1,5 @@
+import Layout from './Layout';
+
 export default class Settings {
   constructor(app) {
     this.app = app;
@@ -45,6 +47,15 @@ export default class Settings {
 
   toggleSettings() {
     this.htmlContent.classList.toggle('active');
+    this.fixBodyHandler();
+  }
+
+  fixBodyHandler() {
+    if (this.htmlContent.classList.contains('active')) {
+      Layout.fixBody();
+    } else {
+      Layout.unfixBody();
+    }
   }
 
   resetSettings() {

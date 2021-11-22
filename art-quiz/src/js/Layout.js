@@ -78,4 +78,14 @@ export default class Layout {
     el.className = 'arrow-left back';
     return el;
   }
+
+  static fixBody() {
+    document.body.style.top = `-${window.scrollY}px`;
+    document.body.style.position = 'fixed';
+  }
+
+  static unfixBody() {
+    document.body.style.position = '';
+    document.body.style.top = '';
+  }
 }
