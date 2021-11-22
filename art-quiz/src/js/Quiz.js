@@ -549,6 +549,10 @@ export default class Quiz {
     this.saveGameData();
   }
 
+  /**
+   * Setup questions structure for every game type.
+   * Setup shuffled round images.
+   */
   setupQuestions() {
     let questions = [...this.db[this.settings.data.language]];
     if (Quiz.SETTINGS.initRandomSort) {

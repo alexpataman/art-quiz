@@ -1,4 +1,5 @@
-console.log(`%Art Quiz`, 'font-weight: bold; font-size: 18px');
+/* eslint-disable no-console */
+console.log(`%cArt Quiz`, 'font-weight: bold; font-size: 18px');
 console.log(
   `https://github.com/rolling-scopes-school/tasks/blob/master/tasks/art-quiz/art-quiz.md\n\n`,
 );
