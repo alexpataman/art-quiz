@@ -22,6 +22,7 @@ export default class Modal {
     this.removeOverlay();
     this.isOpen = false;
     Modal.unfixBody();
+    setTimeout(() => this.modalContent.replaceChildren(''), 1000);
   }
 
   static createOverlayElement() {

@@ -5,13 +5,13 @@ export default class Settings {
     this.app = app;
 
     this.DEFAULT_VALUES = {
-      enableSoundEffects: false,
+      enableSoundEffects: true,
       effectsVolumeLevel: this.app.sounds.getDefaultValue('defaultEffectsVolume'),
       enableMusic: false,
       musicVolumeLevel: this.app.sounds.getDefaultValue('defaultMusicVolume'),
-      timeLimit: '10',
-      timeLimitedGame: false,
-      language: 'en',
+      timeLimit: '15',
+      timeLimitedGame: true,
+      language: 'ru',
     };
 
     this.data = this.getSettings();

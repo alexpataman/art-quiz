@@ -414,7 +414,9 @@ export default class Quiz {
       const answerOption = document.createElement('button');
       answerOption.dataset.id = index;
       answerOption.textContent = option.author;
-      answerOption.addEventListener('click', (event) => this.processAnswer(event));
+      answerOption.addEventListener('click', (event) =>
+        this.processAnswer(event.currentTarget.dataset.id),
+      );
       answerOptions.append(answerOption);
     });
     html.append(image);
@@ -445,7 +447,9 @@ export default class Quiz {
       answerOption.alt = option.name;
       answerOption.title = option.name;
       answerOption.src = Quiz.getQuestionImageUrl(option.imageNum);
-      answerOption.addEventListener('click', (event) => this.processAnswer(event));
+      answerOption.addEventListener('click', (event) =>
+        this.processAnswer(event.currentTarget.dataset.id),
+      );
       answerOptions.append(answerOption);
     });
     html.append(h2);
@@ -454,12 +458,10 @@ export default class Quiz {
     return html;
   }
 
-  processAnswer(event) {
+  processAnswer(userAnswerId) {
     let isCorrectAnswer;
-    let userAnswerId;
     this.variables.timer.stop();
-    if (event) {
-      userAnswerId = event.currentTarget.dataset.id;
+    if (userAnswerId >= 0) {
       isCorrectAnswer = this.isCorrectAnswer(userAnswerId);
     } else {
       isCorrectAnswer = false;
