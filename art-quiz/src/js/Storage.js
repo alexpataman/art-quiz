@@ -10,23 +10,23 @@ export default class Storage {
   }
 
   set(fieldName, data) {
-    localStorage[this.computeFieldName(fieldName)] = JSON.stringify(data);
+    localStorage.setItem(this.computeFieldName(fieldName), JSON.stringify(data));
   }
 
   get(fieldName) {
-    return localStorage[this.computeFieldName(fieldName)]
-      ? JSON.parse(localStorage[this.computeFieldName(fieldName)])
+    return this.exists(fieldName)
+      ? JSON.parse(localStorage.getItem(this.computeFieldName(fieldName)))
       : null;
   }
 
   exists(fieldName) {
-    return !!localStorage[this.computeFieldName(fieldName)];
+    return !!localStorage.getItem(this.computeFieldName(fieldName));
   }
 
   clear() {
     Object.keys(localStorage).forEach((el) => {
       if (el.indexOf(this.prefix) === 0) {
-        delete localStorage[el];
+        localStorage.removeItem(el);
       }
     });
   }
