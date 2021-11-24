@@ -141,20 +141,17 @@ export default class Quiz {
   getWrongOptions() {
     return this.db[this.settings.data.language]
       .filter((el) => JSON.stringify(el) !== JSON.stringify(this.variables.currentQuestion.data))
-      .sort(() => 0.5 - Math.random())
       .reduce((acc, item) => {
         if (
-          acc.every(
-            (el) =>
-              item.author.toLocaleLowerCase() !== el.author.toLocaleLowerCase() &&
-              this.variables.currentQuestion.data.author.toLocaleLowerCase() !==
-                item.author.toLocaleLowerCase(),
-          )
+          this.variables.currentQuestion.data.author.toLocaleLowerCase() !==
+            item.author.toLocaleLowerCase() &&
+          acc.every((el) => item.author.toLocaleLowerCase() !== el.author.toLocaleLowerCase())
         ) {
           acc.push(item);
         }
         return acc;
       }, [])
+      .sort(() => 0.5 - Math.random())
       .slice(0, Quiz.SETTINGS.numberOfAnswerOptions - 1);
   }
 
