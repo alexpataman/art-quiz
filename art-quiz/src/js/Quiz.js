@@ -100,7 +100,7 @@ export default class Quiz {
     this.app.layout.addBackLink(this.showHomePage, this);
   }
 
-  startQuestion(roundIndex, questionIndex = 0) {
+  async startQuestion(roundIndex, questionIndex = 0) {
     this.variables.currentQuestionId = questionIndex;
     this.variables.currentQuestion = this.getQuestion(roundIndex, questionIndex);
     this.variables.currentAnswerOptions = Quiz.shuffleOptions(
@@ -108,7 +108,7 @@ export default class Quiz {
       this.getWrongOptions(),
     );
 
-    this.app.layout.setPageContent(this.getQuestionPageContent(), 'question');
+    await this.app.layout.setPageContent(this.getQuestionPageContent(), 'question');
     this.app.layout.addBackLink(this.showRoundSelectorPage, this);
     this.preloadNextQuestionImages();
     this.variables.timer.init();
