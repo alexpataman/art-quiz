@@ -44,7 +44,7 @@ export default class Layout {
     this.backLinkWrapper = this.header.querySelector('.back-link-wrapper');
   }
 
-  async setPageContent(content, pageId) {
+  setPageContent(content, pageId) {
     return new Promise((resolve) => {
       this.main.style.opacity = 0;
       setTimeout(() => {
@@ -62,7 +62,7 @@ export default class Layout {
     this.body.className = className;
   }
 
-  async addBackLink(fn, context) {
+  addBackLink(fn, context) {
     setTimeout(() => {
       this.backLink = Layout.getBackLink();
       this.backLinkWrapper.replaceChildren(this.backLink);

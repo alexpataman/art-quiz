@@ -7,7 +7,7 @@ export default class Modal {
     document.body.append(this.overlayElement);
   }
 
-  async open(content = '') {
+  open(content = '') {
     document.body.classList.add('modal-open');
     this.modalContent.replaceChildren(content);
     this.modalContainer.classList.add('open');
