@@ -199,7 +199,9 @@ export default class Quiz {
       </div>
     `;
 
-    html.querySelector('.home-page').addEventListener(
+    const homePageButton = html.querySelector('.home-page');
+
+    homePageButton.addEventListener(
       'click',
       () => {
         this.app.layout.modal.close();
@@ -208,7 +210,9 @@ export default class Quiz {
       { once: true },
     );
 
-    html.querySelector('.next-quiz').addEventListener(
+    const nextQuizButton = html.querySelector('.next-quiz');
+
+    nextQuizButton.addEventListener(
       'click',
       () => {
         this.app.layout.modal.close();
@@ -342,7 +346,9 @@ export default class Quiz {
         </div>        
       `;
 
-      option.querySelectorAll('.statistics, .score').forEach((el) =>
+      const statisticsButtons = option.querySelectorAll('.statistics, .score');
+
+      statisticsButtons.forEach((el) =>
         el.addEventListener(
           'click',
           (event) => {
