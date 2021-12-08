@@ -120,13 +120,17 @@ export default class Timer {
   }
 
   setRemainingPathColor(timeLeft) {
+    const updateRemainingColor = (removeColor, addColor) => {
+      const pathRemainingElement = this.container.querySelector('#base-timer-path-remaining');
+      pathRemainingElement.classList.remove(removeColor);
+      pathRemainingElement.classList.add(addColor);
+    };
+
     const { alert, warning, info } = this.COLOR_CODES;
     if (timeLeft <= alert.threshold) {
-      this.container.querySelector('#base-timer-path-remaining').classList.remove(warning.color);
-      this.container.querySelector('#base-timer-path-remaining').classList.add(alert.color);
+      updateRemainingColor(warning.color, alert.color);
     } else if (timeLeft <= warning.threshold) {
-      this.container.querySelector('#base-timer-path-remaining').classList.remove(info.color);
-      this.container.querySelector('#base-timer-path-remaining').classList.add(warning.color);
+      updateRemainingColor(info.color, warning.color);
     }
   }
 
