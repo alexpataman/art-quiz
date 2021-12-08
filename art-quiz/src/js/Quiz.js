@@ -135,20 +135,29 @@ export default class Quiz {
   /**
    *  Getting wrong answer options
    * - exclude correct answer
-   * - shuffle
    * - keep unique author names only
+   * - shuffle
    */
   getWrongOptions() {
     return this.db[this.settings.data.language]
-      .filter((el) => JSON.stringify(el) !== JSON.stringify(this.variables.currentQuestion.data))
+      .filter((el) => {
+        const isCurrentQuestion =
+          JSON.stringify(el) === JSON.stringify(this.variables.currentQuestion.data);
+
+        return !isCurrentQuestion;
+      })
       .reduce((acc, item) => {
-        if (
-          this.variables.currentQuestion.data.author.toLocaleLowerCase() !==
-            item.author.toLocaleLowerCase() &&
-          acc.every((el) => item.author.toLocaleLowerCase() !== el.author.toLocaleLowerCase())
-        ) {
+        const isCurrentAuthor =
+          this.variables.currentQuestion.data.author.toLocaleLowerCase() ===
+          item.author.toLocaleLowerCase();
+
+        const notInOptionsSet = (arr, x) =>
+          arr.every((el) => x.author.toLocaleLowerCase() !== el.author.toLocaleLowerCase());
+
+        if (!isCurrentAuthor && notInOptionsSet(acc, item)) {
           acc.push(item);
         }
+
         return acc;
       }, [])
       .sort(() => 0.5 - Math.random())
