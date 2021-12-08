@@ -3,7 +3,7 @@ import Layout from './Layout';
 import Sounds from './Sounds';
 import Translations from './Translations';
 import Settings from './Settings';
-import Quiz from './Quiz';
+import Quiz from './Quiz/Main';
 
 class App {
   constructor() {
