@@ -66,10 +66,14 @@ export default class Layout {
     setTimeout(() => {
       this.backLink = Layout.getBackLink();
       this.backLinkWrapper.replaceChildren(this.backLink);
-      this.backLink.addEventListener('click', () => {
-        this.backLink.remove();
-        fn.apply(context);
-      });
+      this.backLink.addEventListener(
+        'click',
+        () => {
+          this.backLink.remove();
+          fn.apply(context);
+        },
+        { once: true },
+      );
     }, this.TRANSITION_TIMEOUT);
   }
 

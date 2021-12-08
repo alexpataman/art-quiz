@@ -81,7 +81,7 @@ export default class Quiz {
       option.dataset.id = el.id;
       option.className = el.id;
       option.textContent = i18next.t(el.title);
-      option.addEventListener('click', (event) => this.startGame(event));
+      option.addEventListener('click', (event) => this.startGame(event), { once: true });
       optionWrapper.append(option);
       html.append(optionWrapper);
     });
@@ -190,15 +190,23 @@ export default class Quiz {
       </div>
     `;
 
-    html.querySelector('.home-page').addEventListener('click', () => {
-      this.app.layout.modal.close();
-      this.showHomePage();
-    });
+    html.querySelector('.home-page').addEventListener(
+      'click',
+      () => {
+        this.app.layout.modal.close();
+        this.showHomePage();
+      },
+      { once: true },
+    );
 
-    html.querySelector('.next-quiz').addEventListener('click', () => {
-      this.app.layout.modal.close();
-      this.showRoundSelectorPage();
-    });
+    html.querySelector('.next-quiz').addEventListener(
+      'click',
+      () => {
+        this.app.layout.modal.close();
+        this.showRoundSelectorPage();
+      },
+      { once: true },
+    );
 
     return html;
   }
@@ -224,27 +232,38 @@ export default class Quiz {
 
     html
       .querySelector('.download')
-      .addEventListener('click', () =>
-        utils.download(
-          Quiz.getQuestionImageFullUrl(question.data.imageNum),
-          `${question.data.author}-${question.data.name}[${question.data.year}]`,
-        ),
+      .addEventListener(
+        'click',
+        () =>
+          utils.download(
+            Quiz.getQuestionImageFullUrl(question.data.imageNum),
+            `${question.data.author}-${question.data.name}[${question.data.year}]`,
+          ),
+        { once: true },
       );
 
     const button = document.createElement('button');
     if (showNextButton) {
       button.className = 'button-pink next-question';
       button.textContent = i18next.t(`Next`);
-      button.addEventListener('click', () => {
-        this.app.layout.modal.close();
-        this.nextQuestion();
-      });
+      button.addEventListener(
+        'click',
+        () => {
+          this.app.layout.modal.close();
+          this.nextQuestion();
+        },
+        { once: true },
+      );
     } else {
       button.className = 'button-pink';
       button.textContent = i18next.t(`Close`);
-      button.addEventListener('click', () => {
-        this.app.layout.modal.close();
-      });
+      button.addEventListener(
+        'click',
+        () => {
+          this.app.layout.modal.close();
+        },
+        { once: true },
+      );
     }
 
     html.append(button);
@@ -267,11 +286,15 @@ export default class Quiz {
         item.innerHTML = `
         <img src="${Quiz.getQuestionImageUrl(question.data.imageNum)}" alr="">        
       `;
-        item.addEventListener('click', () => {
-          this.app.layout.modal.open(
-            this.getQuestionAnswerModalContent(this.getQuestion(roundId, index), question.status),
-          );
-        });
+        item.addEventListener(
+          'click',
+          () => {
+            this.app.layout.modal.open(
+              this.getQuestionAnswerModalContent(this.getQuestion(roundId, index), question.status),
+            );
+          },
+          { once: true },
+        );
         items.append(item);
       },
     );
@@ -311,26 +334,42 @@ export default class Quiz {
       `;
 
       option.querySelectorAll('.statistics, .score').forEach((el) =>
-        el.addEventListener('click', (event) => {
-          this.showRoundStatisticsPage(event.currentTarget.dataset.roundId);
-        }),
+        el.addEventListener(
+          'click',
+          (event) => {
+            this.showRoundStatisticsPage(event.currentTarget.dataset.roundId);
+          },
+          { once: true },
+        ),
       );
 
       option
         .querySelector('.play-again')
-        .addEventListener('click', (event) => this.startRound(event.currentTarget.dataset.roundId));
+        .addEventListener(
+          'click',
+          (event) => this.startRound(event.currentTarget.dataset.roundId),
+          { once: true },
+        );
 
       if (roundStatistics.correct + roundStatistics.wrong) {
-        option.querySelector('.category-image').addEventListener('click', (event) => {
-          this.app.layout.main.querySelectorAll('.touched').forEach((el) => {
-            el.classList.remove('touched');
-          });
-          event.currentTarget.classList.add('touched');
-        });
+        option.querySelector('.category-image').addEventListener(
+          'click',
+          (event) => {
+            this.app.layout.main.querySelectorAll('.touched').forEach((el) => {
+              el.classList.remove('touched');
+            });
+            event.currentTarget.classList.add('touched');
+          },
+          { once: true },
+        );
       } else {
-        option.addEventListener('click', (event) => {
-          this.startRound(event.currentTarget.dataset.roundId);
-        });
+        option.addEventListener(
+          'click',
+          (event) => {
+            this.startRound(event.currentTarget.dataset.roundId);
+          },
+          { once: true },
+        );
       }
 
       html.append(option);
@@ -411,8 +450,10 @@ export default class Quiz {
       const answerOption = document.createElement('button');
       answerOption.dataset.id = index;
       answerOption.textContent = option.author;
-      answerOption.addEventListener('click', (event) =>
-        this.processAnswer(event.currentTarget.dataset.id),
+      answerOption.addEventListener(
+        'click',
+        (event) => this.processAnswer(event.currentTarget.dataset.id),
+        { once: true },
       );
       answerOptions.append(answerOption);
     });
@@ -444,8 +485,10 @@ export default class Quiz {
       answerOption.alt = option.name;
       answerOption.title = option.name;
       answerOption.src = Quiz.getQuestionImageUrl(option.imageNum);
-      answerOption.addEventListener('click', (event) =>
-        this.processAnswer(event.currentTarget.dataset.id),
+      answerOption.addEventListener(
+        'click',
+        (event) => this.processAnswer(event.currentTarget.dataset.id),
+        { once: true },
       );
       answerOptions.append(answerOption);
     });
