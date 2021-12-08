@@ -64,17 +64,18 @@ export default class Settings {
 
   handleFormChange(event) {
     this.data = Object.fromEntries(new FormData(this.form).entries());
+    const changedField = event.target.name;
 
-    if (event.target.name === 'language') {
+    if (changedField === 'language') {
       this.app.translations.applySettings(event.target.value);
       document.dispatchEvent(new Event('changeLanguage'));
     }
 
-    if (event.target.name === 'timeLimitedGame') {
+    if (changedField === 'timeLimitedGame') {
       document.dispatchEvent(new Event('changeTimeLimitedGameSetting'));
     }
 
-    if (event.target.name === 'enableMusic') {
+    if (changedField === 'enableMusic') {
       if (!event.target.checked) {
         this.app.sounds.stopMusic();
       } else if (event.isTrusted) {
@@ -82,14 +83,14 @@ export default class Settings {
       }
     }
 
-    if (event.target.name === 'effectsVolumeLevel') {
+    if (changedField === 'effectsVolumeLevel') {
       this.app.sounds.setVolume('effects', event.target.value);
       if (event.isTrusted) {
         this.app.sounds.playEffect('answerCorrect');
       }
     }
 
-    if (event.target.name === 'musicVolumeLevel') {
+    if (changedField === 'musicVolumeLevel') {
       this.app.sounds.setVolume('music', event.target.value);
     }
 
