@@ -668,5 +668,3 @@ export default class Quiz {
     document.addEventListener('changeLanguage', () => this.showHomePage());
   }
 }
-
-// export default new Game();
